@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="RecipeApp.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:RecipeApp.Pages"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="False">
+
+    <ShellContent
+        Route="MainPage"
+        ContentTemplate="{DataTemplate pages:MainPage}" />
+
+    <ShellContent
+        Route="LoginPage"
+        ContentTemplate="{DataTemplate pages:LoginPage}" />
+
+    <ShellContent
+        Route="SignUpPage"
+        ContentTemplate="{DataTemplate pages:SignUpPage}" />
+
+    <ShellContent
+        Route="HomePage"
+        ContentTemplate="{DataTemplate pages:HomePage}" />
+
+    <ShellContent
+        Route="ExplorePage"
+        ContentTemplate="{DataTemplate pages:ExplorePage}" />
+
+    <ShellContent
+        Route="FavoritesPage"
+        ContentTemplate="{DataTemplate pages:FavoritesPage}" />
+
+    <ShellContent
+        Route="ProfilePage"
+        ContentTemplate="{DataTemplate pages:ProfilePage}" />
+
+    <ShellContent
+        Route="RecipeDetailsPage"
+        ContentTemplate="{DataTemplate pages:RecipeDetailsPage}" />
+
+</Shell>

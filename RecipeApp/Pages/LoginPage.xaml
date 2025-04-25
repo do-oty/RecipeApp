@@ -1,0 +1,171 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RecipeApp.Pages.LoginPage"
+             Padding="0"
+             Shell.NavBarIsVisible="False">
+    <ScrollView>
+        <Grid>
+            <Image Source="background2.png"
+                   Aspect="AspectFill"
+                   Opacity="1"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill" />
+
+            <BoxView HorizontalOptions="Fill"
+                     VerticalOptions="Fill"
+                     Opacity="0.4">
+                <BoxView.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#492407" Offset="0.0" />
+                        <GradientStop Color="#FFB16D" Offset="0.6" />
+                    </LinearGradientBrush>
+                </BoxView.Background>
+            </BoxView>
+
+            <VerticalStackLayout Padding="0" Spacing="0">
+                <Grid RowDefinitions="Auto,*"
+                      ColumnDefinitions="*,*"
+                      HorizontalOptions="Fill"
+                      VerticalOptions="Fill"
+                      HeightRequest="915"
+                      WidthRequest="415">
+
+                    <Image Source="welcome_banner.svg"
+                           Grid.Row="0"
+                           Grid.ColumnSpan="2"
+                           WidthRequest="300"
+                           HeightRequest="200"
+                           VerticalOptions="Start"
+                           HorizontalOptions="Center">
+                        <Image.Shadow>
+                            <Shadow Brush="Black"
+                                    Opacity="1"
+                                    Offset="5,5"
+                                    Radius="20" />
+                        </Image.Shadow>
+                    </Image>
+
+                    <Border BackgroundColor="#FFF9F4"
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0.5"
+                            Padding="10"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill">
+
+                        <Border.Shadow>
+                            <Shadow Brush="#180C02"
+                                    Opacity=".5"
+                                    Offset="5,5"
+                                    Radius="20" />
+                        </Border.Shadow>
+
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="*,*"
+                              WidthRequest="315"
+                              HeightRequest="800"
+                              RowSpacing="10">
+
+                            <ImageButton Source="back_button2.svg"
+                                         Clicked="OnBackButtonTapped"
+                                         BackgroundColor="Transparent"
+                                         Margin="0,75,0,25"
+                                         Grid.Row="0"
+                                         Grid.Column="0"
+                                         HorizontalOptions="Start"
+                                         VerticalOptions="Start" />
+
+                            <Label Text="Log In"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#456B19"
+                                   HorizontalOptions="Start"
+                                   Grid.Row="1"
+                                   Grid.ColumnSpan="2" />
+
+                            <Border Grid.Row="2"
+                                    Grid.ColumnSpan="2"
+                                    StrokeThickness="0.8"
+                                    StrokeShape="RoundRectangle 15"
+                                    Padding="5"
+                                    BackgroundColor="White"
+                                    Stroke="#456B19">
+                                <Entry x:Name="EmailEntry"
+                                       Placeholder="Email Address" />
+                            </Border>
+
+                            <Border Grid.Row="3"
+                                    Grid.ColumnSpan="2"
+                                    StrokeThickness="0.8"
+                                    Padding="5"
+                                    StrokeShape="RoundRectangle 15"
+                                    Stroke="#456B19"
+                                    BackgroundColor="White">
+                                <Entry x:Name="PasswordEntry"
+                                       Placeholder="Password"
+                                       IsPassword="True" />
+                            </Border>
+
+                            <Label Text="Forgot Password?"
+                                   FontAttributes="Bold"
+                                   TextColor="#456B19"
+                                   Grid.Row="4"
+                                   HorizontalOptions="Start"
+                                   Margin="10,0,0,0" />
+
+                            <Grid Grid.Row="5" Grid.ColumnSpan="2">
+                                <Border StrokeThickness="0.8"
+                                        Padding="5"
+                                        StrokeShape="RoundRectangle 15"
+                                        Stroke="#456B19"
+                                        BackgroundColor="White">
+                                    <Entry x:Name="ConfirmPasswordEntry"
+                                           Placeholder="Confirm Password"
+                                           IsPassword="True"
+                                           TextChanged="OnConfirmPasswordTextChanged" />
+                                </Border>
+                                <Image x:Name="ConfirmPasswordValidationIcon"
+                                       Source="check.svg"
+                                       HeightRequest="15"
+                                       WidthRequest="20"
+                                       HorizontalOptions="End"
+                                       VerticalOptions="Center"
+                                       Margin="0,0,10,0"
+                                       IsVisible="False" />
+                            </Grid>
+
+                            <HorizontalStackLayout Grid.Row="6"
+                                                   Grid.ColumnSpan="2"
+                                                   HorizontalOptions="Start"
+                                                   Margin="0,0,0,0">
+                                <CheckBox x:Name="RememberMeCheckBox" Color="#456B19" Margin="0,-15,-8,0"/>
+                                <Label Text="Remember Me"
+                                       FontAttributes="Bold"
+                                       TextColor="#456B19"
+                                       HorizontalOptions="Start"
+                                        />
+                            </HorizontalStackLayout>
+
+                            <Border Grid.Row="7"
+                                    Grid.ColumnSpan="2"
+                                    StrokeThickness="0.8"
+                                    StrokeShape="RoundRectangle 15"
+                                    Stroke="#456B19"
+                                    Background="White"
+                                    HeightRequest="45">
+                                <Button Text="Log In Now"
+                                        FontFamily="OpenSans-Light"
+                                        BackgroundColor="#456B19"
+                                        FontAttributes="Bold"
+                                        TextColor="White"
+                                        FontSize="15"
+                                        Padding="20,0" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

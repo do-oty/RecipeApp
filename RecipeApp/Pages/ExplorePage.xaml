@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:RecipeApp.Controls"
+             x:Class="RecipeApp.Pages.ExplorePage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#FFF9F4">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+    
+        <Border Grid.Row="0"
+                BackgroundColor="#D98236"
+                HeightRequest="50"
+                Padding="5"
+                StrokeThickness="0">
+
+        </Border>
+
+        <!-- Search Bar and Tags Section -->
+        <Border Grid.Row="1"
+                BackgroundColor="#D98236"
+                Padding="2"
+                StrokeThickness="0"
+                ZIndex="2"
+                Margin="0,-5,0,0">
+            <VerticalStackLayout Spacing="5">
+                <!-- Search Bar -->
+                <Border BackgroundColor="White"
+                        HeightRequest="35"
+                        Stroke="#5b8224"
+                        Padding="5"
+                        Margin="10,0,10,0"
+                        StrokeShape="RoundRectangle 5,5,5,5"
+                        StrokeThickness="0">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Entry Placeholder="Search recipes..."
+                               Text="{Binding SearchQuery}"
+                               BackgroundColor="Transparent"
+                               FontSize="14"
+                               HeightRequest="40"
+                               Margin="10,0,0,0"
+                               TextChanged="SearchEntry_TextChanged"/>
+                        <ImageButton Source="explore.svg"
+                                   Command="{Binding SearchCommand}"
+                                   BackgroundColor="Transparent"
+                                   HeightRequest="30"
+                                   WidthRequest="30"
+                                   HorizontalOptions="End"/>
+                    </Grid>
+                </Border>
+
+                <!-- Selected Tags -->
+                <ScrollView Orientation="Horizontal"
+                           HorizontalScrollBarVisibility="Never"
+                           Margin="0,0,0,5">
+                    <HorizontalStackLayout x:Name="SelectedTagsContainer"
+                                         Spacing="5">
+                    
+                    </HorizontalStackLayout>
+                </ScrollView>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Tags Carousel -->
+        <ScrollView Grid.Row="2" Scrolled="ScrollView_Scrolled">
+            <VerticalStackLayout>
+         
+                <CollectionView x:Name="TagsCollection"
+                              HeightRequest="100"
+                              Margin="0,10,0,0"
+                              ItemsSource="{Binding FilteredTags}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal"
+                                         ItemSpacing="10"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout>
+                                <Border StrokeShape="RoundRectangle 15,15,15,15"
+                                        WidthRequest="100"
+                                        HeightRequest="80"
+                                        BackgroundColor="#5b8224">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AddTagCommand}"
+                                                              CommandParameter="{Binding}"/>
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout>
+                                   
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Label Text="{Binding}"
+                                       FontSize="14"
+                                       FontAutoScalingEnabled="True"
+                                       TextColor="#5b8224"
+                                       HorizontalOptions="Center"
+                                       Margin="5,0,5,0"
+                                       LineBreakMode="WordWrap"
+                                       MaxLines="2">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AddTagCommand}"
+                                                              CommandParameter="{Binding}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Text="Search Results"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="#5b8224"
+                       HorizontalOptions="Start"
+                       Margin="10,30,0,10"/>
+
+                <Label Text="{Binding SearchResultsText}"
+                       TextColor="#5b8224"
+                       HorizontalOptions="Center"
+                       Margin="10,0,10,20"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <controls:CustomTabBar Grid.Row="3" />
+    </Grid>
+</ContentPage> 

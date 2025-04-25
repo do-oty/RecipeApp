@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RecipeApp.Pages.RecipeDetailsPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#FFF9F4">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Top Navigation Bar -->
+        <Border Grid.Row="0"
+                BackgroundColor="#D98236"
+                HeightRequest="50"
+                Padding="5"
+                StrokeThickness="0">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <ImageButton Source="back.svg"
+                           HeightRequest="30"
+                           WidthRequest="30"
+                           BackgroundColor="Transparent"
+                           Command="{Binding GoBackCommand}"/>
+                <Label Text="{Binding Recipe.Name}"
+                       Grid.Column="1"
+                       TextColor="White"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+                <HorizontalStackLayout Grid.Column="2" 
+                                     Spacing="15">
+                    <ImageButton Source="favorite.svg"
+                               HeightRequest="30"
+                               WidthRequest="30"
+                               BackgroundColor="Transparent"
+                               Command="{Binding ToggleFavoriteCommand}"/>
+                    <ImageButton Source="share.svg"
+                               HeightRequest="30"
+                               WidthRequest="30"
+                               BackgroundColor="Transparent"
+                               Command="{Binding ShareRecipeCommand}"/>
+                </HorizontalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="0">
+                <!-- Recipe Image -->
+                <Image Source="{Binding Recipe.Image}"
+                       Aspect="AspectFill"
+                       HeightRequest="300"/>
+                
+                <!-- Recipe Info Card -->
+                <Border BackgroundColor="White"
+                        StrokeShape="RoundRectangle 25,25,0,0"
+                        Margin="0,-25,0,0"
+                        Padding="20">
+                    <VerticalStackLayout Spacing="20">
+                        <!-- Quick Info -->
+                        <HorizontalStackLayout Spacing="20" 
+                                             HorizontalOptions="Center">
+                            <HorizontalStackLayout Spacing="6">
+                                <Image Source="time.svg"
+                                       HeightRequest="20"
+                                       WidthRequest="20"/>
+                                <Label Text="{Binding Recipe.CookTime}"
+                                       FontSize="14"
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+                            <Label Text="•"
+                                   FontSize="14"
+                                   TextColor="#666"/>
+                            <HorizontalStackLayout Spacing="6">
+                                <Image Source="difficulty.svg"
+                                       HeightRequest="20"
+                                       WidthRequest="20"/>
+                                <Label Text="{Binding Recipe.Difficulty}"
+                                       FontSize="14"
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+                            <Label Text="•"
+                                   FontSize="14"
+                                   TextColor="#666"/>
+                            <HorizontalStackLayout Spacing="6">
+                                <Image Source="servings.svg"
+                                       HeightRequest="20"
+                                       WidthRequest="20"/>
+                                <Label Text="{Binding Recipe.Servings}"
+                                       FontSize="14"
+                                       TextColor="White"/>
+                            </HorizontalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <!-- Description -->
+                        <Label Text="{Binding Recipe.Caption}"
+                               FontSize="16"
+                               TextColor="#333"
+                               LineHeight="1.4"/>
+
+                        <!-- Ingredients Section -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Ingredients"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="#5b8224"/>
+                            <CollectionView ItemsSource="{Binding Recipe.Ingredients}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <HorizontalStackLayout Spacing="10" 
+                                                             Padding="5">
+                                            <Label Text="•"
+                                                   FontSize="16"
+                                                   TextColor="#5b8224"/>
+                                            <Label Text="{Binding .}"
+                                                   FontSize="16"
+                                                   TextColor="#333"
+                                                   LineHeight="1.4"/>
+                                        </HorizontalStackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+
+                        <!-- Instructions Section -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Instructions"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="#5b8224"/>
+                            <CollectionView ItemsSource="{Binding Recipe.Instructions}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="Auto,*" 
+                                              Padding="5">
+                                            <Label Text="{Binding Number}"
+                                                   Grid.Column="0"
+                                                   FontSize="16"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#5b8224"
+                                                   Margin="0,0,10,0"/>
+                                            <Label Text="{Binding Step}"
+                                                   Grid.Column="1"
+                                                   FontSize="16"
+                                                   TextColor="#333"
+                                                   LineHeight="1.4"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+
+                        <!-- Tags Section -->
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Tags"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   TextColor="#5b8224"/>
+                            <CollectionView ItemsSource="{Binding Recipe.Tags}">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Horizontal"
+                                                     ItemSpacing="10"/>
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BackgroundColor="#5b8224"
+                                                StrokeShape="RoundRectangle 15"
+                                                Padding="10,5">
+                                            <Label Text="{Binding .}"
+                                                   TextColor="White"
+                                                   FontSize="14"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom Action Bar -->
+        <Border Grid.Row="2"
+                BackgroundColor="White"
+                StrokeShape="RoundRectangle 25,25,0,0"
+                Padding="20,10">
+            <Button Text="Start Cooking"
+                    BackgroundColor="#5b8224"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    HeightRequest="50"
+                    CornerRadius="25"
+                    Command="{Binding StartCookingCommand}"/>
+        </Border>
+    </Grid>
+</ContentPage> 

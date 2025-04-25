@@ -1,0 +1,156 @@
+﻿
+  <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RecipeApp.Pages.MainPage"
+                Shell.TabBarIsVisible="False"
+             Padding="0">
+
+    <ScrollView>
+        <Grid>
+
+        <Image Source="background2.png"
+               Aspect="AspectFill"
+               Opacity="1"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill" 
+               />
+
+        <BoxView HorizontalOptions="Fill"
+                 VerticalOptions="Fill"
+                 Opacity="0.4">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#492407" Offset="0.0" />
+                    <GradientStop Color="#FFB16D" Offset="0.6" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <VerticalStackLayout Padding="0" Spacing="0">
+            <Grid RowDefinitions="*,*"
+                  ColumnDefinitions="*,*"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill"
+                  HeightRequest="915"
+                  WidthRequest="415">
+
+                <Image Source="logo_pantry.svg"
+                       Grid.Row="0"
+                       Grid.ColumnSpan="2"
+                       WidthRequest="320"
+                       HeightRequest="320"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center">
+                    <Image.Shadow>
+                        <Shadow Brush="Black"
+                            Opacity="1"
+                            Offset="5,5"
+                            Radius="20"/>
+                     </Image.Shadow> 
+                </Image>
+
+                <Border BackgroundColor="#FFF9F4"
+                        StrokeShape="RoundRectangle 20"
+                        StrokeThickness="0.5"
+                        Padding="10"
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        >
+
+                    <Border.Shadow>
+                        <Shadow Brush="#180C02"
+                                Opacity="1"
+                                Offset="5,5"
+                                Radius="50" />
+                    </Border.Shadow>
+
+                    <VerticalStackLayout VerticalOptions="Center"
+                                         HorizontalOptions="Fill">
+
+                        <HorizontalStackLayout VerticalOptions="Center"
+                                               HorizontalOptions="Center">
+                            <Grid RowDefinitions ="Auto,*,*,*" ColumnDefinitions="*,*"
+                                  WidthRequest="300" HeightRequest="300">
+                              <Label TextColor="#5b8224" FontSize="15"
+                                       Grid.Row="0" 
+                                       VerticalOptions="Center" 
+                                       HorizontalOptions="Center" 
+                                       Grid.ColumnSpan="2">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Welcome to " FontFamily="OpenSans-Light" TextColor="#5b8224" />
+                                            <Span Text="PantryPal!" FontAttributes="Bold" FontFamily="OpenSans" TextColor="#5b8224"/>
+                                            <Span Text=" Your go-to app for easy, delicious recipes.&#10;&#10;" FontFamily="OpenSans-Light" TextColor="#5b8224"/>
+
+                                            <Span Text="Sign up" FontAttributes="Bold" FontFamily="OpenSans" TextColor="#5b8224"/>
+                                            <Span Text=" to customize your experience, or " FontFamily="OpenSans-Light" TextColor="#5b8224"/>
+                                            <Span Text="Continue as a guest" FontAttributes="Bold" FontFamily="OpenSans" TextColor="#5b8224"/>
+                                            <Span Text=" to start exploring!" FontFamily="OpenSans-Light" TextColor="#5b8224"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+
+
+
+
+                                </Label>
+                                
+
+
+                                <Border Grid.Column="1" Grid.Row="2"
+                                        StrokeThickness=".8"
+                                        StrokeShape="RoundRectangle 0,15,0,15"
+                                        Stroke="#456B19"
+                                        Background="White"
+                                        WidthRequest="175"
+                                        HeightRequest="45">
+                                    <Button Text="LogIn"
+                                             Clicked="OnLoginTapped"
+                                             FontFamily="OpenSans-Light"
+                                            BackgroundColor="Transparent"
+                                            FontAttributes="Bold"
+                                            TextColor="#456B19"
+                                            FontSize="15"
+                                            Padding="20,0" />
+                                </Border>
+
+                                <Border Grid.Column="0" Grid.Row="2"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 15,15,15,15"
+                                        Stroke="Transparent"
+                                        Background="#456B19"
+                                        WidthRequest="170"
+                                        HeightRequest="46">
+                                    <Button Text="Sign Up"
+                                            Clicked="OnSignUpTapped"
+                                             FontFamily="OpenSans-Light"
+                                            BackgroundColor="Transparent"
+                                            TextColor="White"
+                                            FontAttributes="Bold"
+                                            FontSize="15"
+                                            Padding="20,0" />
+                                    
+                                </Border>
+                                <Label Text="Continue as a guest" 
+                                           TextColor="#5b8224" 
+                                           FontSize="15" 
+                                           FontAttributes="Bold"
+                                           Grid.Row="3" 
+                                           VerticalOptions="Start" 
+                                           HorizontalOptions="Center" 
+                                           Grid.ColumnSpan="2">
+                                        <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnHomePageTapped" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+
+                            </Grid>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+        </VerticalStackLayout>
+    </Grid>
+    </ScrollView>
+</ContentPage>

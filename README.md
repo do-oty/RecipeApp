@@ -58,7 +58,7 @@ A modern recipe application built with .NET MAUI that helps users discover, save
 - [ ] Implement data synchronization
 - [ ] Add offline support with local SQLite database
 
-### 4. Cloud Storage
+### 4. Cloud Storage TENTATIVE (this is we implement creating a custom recipe probably not)
 - [ ] Set up Firebase Storage or alternative
 - [ ] Implement image upload for:
   - User profile pictures
@@ -102,14 +102,8 @@ A modern recipe application built with .NET MAUI that helps users discover, save
 - [ ] Add data encryption for sensitive information
 - [ ] Implement proper error handling and logging
 
-### 7. Testing
-- [ ] Create unit tests for API services
-- [ ] Add integration tests
-- [ ] Implement UI automation tests
-- [ ] Add performance testing
-- [ ] Create CI/CD pipeline
 
-### 8. Performance Optimization
+### 7. Performance Optimization
 - [ ] Implement lazy loading
 - [ ] Add image caching
 - [ ] Optimize API calls

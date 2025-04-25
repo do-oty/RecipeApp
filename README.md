@@ -53,12 +53,12 @@ A modern recipe application built with .NET MAUI that helps users discover, save
 - [ ] Create data models for:
   - User profiles
   - Favorites
-  - Recipe collections
-  - User preferences
+  - Recipe collections // MAYBE
+  - User preferences // trendingScores basically naa tay row na mu check current ratings sa mga recipes
 - [ ] Implement data synchronization
 - [ ] Add offline support with local SQLite database
 
-### 4. Cloud Storage TENTATIVE (this is we implement creating a custom recipe probably not)
+### 4. Cloud Storage //TENTATIVE (this is if we implement creating a custom recipe probably not)
 - [ ] Set up Firebase Storage or alternative
 - [ ] Implement image upload for:
   - User profile pictures

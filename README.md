@@ -2,7 +2,7 @@
 
 A cross-platform mobile application built with .NET MAUI that helps users discover, save, and manage recipes.
 
-![Recipe App Screenshot](RecipeApp/readmeimg.jpg)
+<img src="RecipeApp/readmeimg.jpg" alt="Recipe App Screenshot" width="400"/>
 
 ## Features
 

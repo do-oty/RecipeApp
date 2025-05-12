@@ -1,152 +1,86 @@
 # Recipe App
 
-A modern recipe application built with .NET MAUI that helps users discover, save, and share their favorite recipes.
+A cross-platform mobile application built with .NET MAUI that helps users discover, save, and manage recipes.
 
 ## Features
 
-- Browse recipes by categories and tags
-- Search functionality
-- Recipe details with ingredients and instructions
-- Favorites system
-- User authentication
-- Profile management
+- **User Authentication**
+  - Login and Sign Up functionality
+  - Google Authentication support
+  - User profile management
 
-## API Integration Checklist
+- **Recipe Management**
+  - Browse and explore recipes
+  - View detailed recipe information
+  - Save favorite recipes
+  - Filter and search capabilities
 
-### 1. Recipe API Integration
-- [ ] Choose and integrate a recipe API (e.g., Spoonacular, Edamam, or TheMealDB)
-- [ ] Create API service interfaces:
-  ```csharp
-  public interface IRecipeService
-  {
-      Task<List<Recipe>> GetFeaturedRecipesAsync();
-      Task<List<Recipe>> GetTrendingRecipesAsync();
-      Task<List<RecipeCategory>> GetPopularCategoriesAsync();
-      Task<List<Recipe>> GetRecipesByCategoryAsync(string categoryId);
-      Task<Recipe> GetRecipeDetailsAsync(string recipeId);
-      Task<List<Recipe>> SearchRecipesAsync(string query);
-  }
-  ```
-- [ ] Implement API client with proper error handling
-- [ ] Add caching mechanism for offline support
-- [ ] Implement rate limiting and API key management
-- [ ] Add image loading and caching
+- **Categories and Meals**
+  - Organized recipe categories
+  - Meal type classification
+  - Easy navigation through different food types
 
-### 2. Authentication & User Management
-- [ ] Set up authentication backend
-- [ ] Implement Google Sign-In:
-  ```csharp
-  public interface IAuthService
-  {
-      Task<bool> SignInWithGoogleAsync();
-      Task<bool> SignOutAsync();
-      Task<UserProfile> GetCurrentUserAsync();
-  }
-  ```
-- [ ] Add email/password authentication
-- [ ] Implement password reset functionality
-- [ ] Add email verification
-- [ ] Create user profile management
+## Technical Stack
 
-### 3. Database Integration
-- [ ] Set up backend database
-- [ ] Create data models for:
-  - User profiles
-  - Favorites
-  - Recipe collections
-  - User preferences
-- [ ] Implement data synchronization
-- [ ] Add offline support with local SQLite database
+- **Framework**: .NET MAUI 9.0
+- **Architecture**: MVVM (Model-View-ViewModel)
+- **Key Dependencies**:
+  - CommunityToolkit.Mvvm (8.4.0)
+  - CommunityToolkit.Maui (11.2.0)
+  - Newtonsoft.Json (13.0.3)
+  - Firebase Authentication (for Android)
 
-### 4. Cloud Storage
-- [ ] Set up cloud storage solution
-- [ ] Implement image upload for:
-  - User profile pictures
-  - Custom recipe images
-- [ ] Add image compression and optimization
-- [ ] Implement secure file access
+## Project Structure
 
-### 5. API Preparation Tasks
+```
+RecipeApp/
+├── Pages/                 # UI Pages
+│   ├── HomePage          # Main landing page
+│   ├── ExplorePage       # Recipe discovery
+│   ├── FavoritesPage     # Saved recipes
+│   ├── ProfilePage       # User profile
+│   ├── LoginPage         # Authentication
+│   └── SignUpPage        # User registration
+├── Models/               # Data models
+│   ├── Recipe           # Recipe information
+│   ├── Category         # Recipe categories
+│   ├── Meal            # Meal types
+│   └── FavoriteRecipe   # Saved recipes
+├── ViewModels/          # View models for MVVM
+├── Services/            # Business logic and services
+├── Resources/           # App resources
+│   ├── Images          # App images and icons
+│   ├── Fonts           # Custom fonts
+│   └── Raw             # Other resources
+└── Platforms/          # Platform-specific code
+```
 
-#### Recipe Service
-- [ ] Create API configuration class:
-  ```csharp
-  public class ApiConfig
-  {
-      public string BaseUrl { get; set; }
-      public string ApiKey { get; set; }
-      public int TimeoutSeconds { get; set; }
-  }
-  ```
-- [ ] Implement HTTP client factory
-- [ ] Add request/response logging
-- [ ] Create API response models
-- [ ] Add retry policies for failed requests
+## Supported Platforms
 
-#### Authentication Service
-- [ ] Set up OAuth configuration
-- [ ] Implement token management
-- [ ] Add secure storage for credentials
-- [ ] Create session management
-
-#### Database Service
-- [ ] Create database context
-- [ ] Implement repository pattern
-- [ ] Add migration support
-- [ ] Create data access layer
-
-### 6. Security Implementation
-- [ ] Implement secure storage for API keys
-- [ ] Add request signing
-- [ ] Implement proper token management
-- [ ] Add data encryption for sensitive information
-- [ ] Implement proper error handling and logging
-
-### 7. Performance Optimization
-- [ ] Implement lazy loading
-- [ ] Add image caching
-- [ ] Optimize API calls
-- [ ] Implement proper error handling
-- [ ] Add analytics and monitoring
+- Android (API 21+)
+- iOS (15.0+)
+- macOS (15.0+)
+- Windows (10.0.17763.0+)
 
 ## Getting Started
 
 1. Clone the repository
-2. Install required dependencies
-3. Set up API keys and configurations
-4. Run the application
+2. Install .NET 9.0 SDK
+3. Install Visual Studio 2022 with .NET MAUI workload
+4. Open the solution in Visual Studio
+5. Restore NuGet packages
+6. Build and run the application
 
-## Configuration
+## Development
 
-Create a `appsettings.json` file with the following structure:
-
-```json
-{
-  "ApiSettings": {
-    "RecipeApi": {
-      "BaseUrl": "https://api.recipe-service.com",
-      "ApiKey": "your-api-key",
-      "TimeoutSeconds": 30
-    }
-  }
-}
-```
+The application follows the MVVM pattern and uses the CommunityToolkit.Mvvm package for simplified MVVM implementation. The UI is built using XAML and follows modern design principles.
 
 ## Dependencies
 
-- .NET MAUI
-- SQLite
-- Xamarin.Essentials
-- Newtonsoft.Json
+- Microsoft.Maui.Controls (9.0.60)
+- Microsoft.Maui.Graphics (9.0.60)
+- CommunityToolkit.Mvvm (8.4.0)
+- CommunityToolkit.Maui (11.2.0)
+- Newtonsoft.Json (13.0.3)
+- Firebase Authentication (Android only)
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details. 

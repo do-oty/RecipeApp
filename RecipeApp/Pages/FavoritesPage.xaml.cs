@@ -1,271 +1,132 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using Microsoft.Maui.Controls.Shapes;
+using RecipeApp.Models;
+using RecipeApp.Services;
+using Microsoft.Maui.Controls;
 
 namespace RecipeApp.Pages
 {
     public partial class FavoritesPage : ContentPage
     {
-        private ObservableCollection<string> _tags = new();
-        private ObservableCollection<string> _selectedTags = new();
-        private ObservableCollection<FavoriteRecipe> _favorites = new();
-        private ObservableCollection<FavoriteRecipe> _filteredFavorites = new();
+        private readonly IFavoriteService _favoriteService = App.Services.GetService<IFavoriteService>();
+        private readonly IMealService _mealService = App.Services.GetService<IMealService>();
+        private readonly RecipeApp.ViewModels.MealViewModel _mealViewModel = App.Services.GetService<RecipeApp.ViewModels.MealViewModel>();
+
+        private ObservableCollection<Meal> _favorites = new();
+        private ObservableCollection<Meal> _filteredFavorites = new();
         private string _searchQuery = string.Empty;
         private string _searchResultsText = string.Empty;
 
-        public ObservableCollection<string> Tags
-        {
-            get => _tags;
-            set
-            {
-                _tags = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<string> SelectedTags
-        {
-            get => _selectedTags;
-            set
-            {
-                _selectedTags = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<FavoriteRecipe> Favorites
+        public ObservableCollection<Meal> Favorites
         {
             get => _favorites;
-            set
-            {
-                _favorites = value;
-                OnPropertyChanged();
-            }
+            set { _favorites = value; OnPropertyChanged(); }
         }
-
-        public ObservableCollection<FavoriteRecipe> FilteredFavorites
+        public ObservableCollection<Meal> FilteredFavorites
         {
             get => _filteredFavorites;
-            set
-            {
-                _filteredFavorites = value;
-                OnPropertyChanged();
-            }
+            set { _filteredFavorites = value; OnPropertyChanged(); }
         }
-
         public string SearchQuery
         {
             get => _searchQuery;
-            set
-            {
-                _searchQuery = value;
-                OnPropertyChanged();
-                FilterFavorites();
-            }
+            set { _searchQuery = value; OnPropertyChanged(); FilterFavorites(); }
         }
-
         public string SearchResultsText
         {
             get => _searchResultsText;
-            set
-            {
-                _searchResultsText = value;
-                OnPropertyChanged();
-            }
+            set { _searchResultsText = value; OnPropertyChanged(); }
         }
 
         public ICommand RemoveFromFavoritesCommand { get; }
-        public ICommand SearchCommand { get; }
         public ICommand ViewRecipeCommand { get; }
+        public ICommand ShowFilterModalCommand { get; }
 
         public FavoritesPage()
         {
             InitializeComponent();
             BindingContext = this;
+            RemoveFromFavoritesCommand = new Command<Meal>(async (meal) => await RemoveFromFavorites(meal));
+            ViewRecipeCommand = new Command<Meal>(async (meal) => await OnViewRecipe(meal));
+            ShowFilterModalCommand = new Command(async () => await ShowFilterModal());
+        }
 
-            // Initialize commands
-            RemoveFromFavoritesCommand = new Command<FavoriteRecipe>(RemoveFromFavorites);
-            SearchCommand = new Command(async () => await Shell.Current.GoToAsync("//ExplorePage"));
-            ViewRecipeCommand = new Command<FavoriteRecipe>(OnViewRecipe);
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadFavoritesAsync();
+        }
 
-            // Initialize tags
-            Tags = new ObservableCollection<string>
+        private async Task LoadFavoritesAsync()
+        {
+            var favoriteIds = await _favoriteService.GetFavoriteRecipeIdsAsync();
+            System.Diagnostics.Debug.WriteLine($"FavoritesPage: Loaded favoriteIds: {string.Join(",", favoriteIds)}");
+            var favoriteMeals = new List<Meal>();
+            foreach (var id in favoriteIds)
             {
-                "Breakfast", "Lunch", "Dinner", "Dessert", "Snacks",
-                "Quick & Easy", "Healthy", "Vegetarian", "Comfort Food"
-            };
-
-            // Initialize with sample data (replace with actual data later)
-            LoadSampleData();
-
-            // Initialize filtered collections
-            FilteredFavorites = new ObservableCollection<FavoriteRecipe>(Favorites);
-            SelectedTags = new ObservableCollection<string>();
-
+                var meal = await _mealService.GetMealByIdAsync(id);
+                if (meal != null)
+                    favoriteMeals.Add(meal);
+            }
+            System.Diagnostics.Debug.WriteLine($"FavoritesPage: Loaded {favoriteMeals.Count} meals from MealDB");
+            Favorites = new ObservableCollection<Meal>(favoriteMeals);
+            FilteredFavorites = new ObservableCollection<Meal>(favoriteMeals);
             UpdateSearchResultsText();
         }
 
-        private void LoadSampleData()
+        private async Task RemoveFromFavorites(Meal meal)
         {
-            Favorites = new ObservableCollection<FavoriteRecipe>
-            {
-                new FavoriteRecipe
-                {
-                    Name = "Chicken Adobo",
-                    Description = "Classic Filipino dish with chicken marinated in vinegar, soy sauce, and garlic",
-                    Image = "recipe1.png",
-                    CookTime = "45 mins",
-                    Category = "Main Course",
-                    Tags = new List<string> { "Dinner", "Comfort Food" }
-                },
-                new FavoriteRecipe
-                {
-                    Name = "Pancit Bihon",
-                    Description = "Filipino noodle dish with vegetables and meat",
-                    Image = "recipe2.png",
-                    CookTime = "30 mins",
-                    Category = "Main Course",
-                    Tags = new List<string> { "Quick & Easy", "Lunch" }
-                }
-            };
+            if (meal == null) return;
+            await _favoriteService.RemoveFavoriteAsync(meal.IdMeal);
+            await LoadFavoritesAsync();
+            Favorites.Remove(meal);
+            FilteredFavorites.Remove(meal);
+            UpdateSearchResultsText();
         }
 
-        private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
+        private async Task OnViewRecipe(Meal meal)
         {
-            SearchQuery = e.NewTextValue;
+            if (meal == null) return;
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { "idMeal", meal.IdMeal }
+            };
+            await Shell.Current.GoToAsync("RecipeDetailsPage", navigationParameter);
         }
 
         private void FilterFavorites()
         {
-            var filtered = Favorites.Where(recipe =>
-            {
-                bool matchesSearch = string.IsNullOrWhiteSpace(SearchQuery) ||
-                                   recipe.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
-                                   recipe.Description.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase);
-
-                bool matchesTags = !SelectedTags.Any() ||
-                                 recipe.Tags.Any(tag => SelectedTags.Contains(tag));
-
-                return matchesSearch && matchesTags;
-            });
-
-            FilteredFavorites = new ObservableCollection<FavoriteRecipe>(filtered);
+            var filtered = Favorites.Where(meal =>
+                string.IsNullOrWhiteSpace(SearchQuery) ||
+                meal.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                (meal.Category != null && meal.Category.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase))
+            );
+            FilteredFavorites = new ObservableCollection<Meal>(filtered);
             UpdateSearchResultsText();
-        }
-
-        private void AddTag(string tag)
-        {
-            if (!SelectedTags.Contains(tag))
-            {
-                SelectedTags.Add(tag);
-                CreateTagButton(tag);
-                FilterFavorites();
-            }
-        }
-
-        private void RemoveTag(string tag)
-        {
-            if (SelectedTags.Remove(tag))
-            {
-                var tagButton = SelectedTagsContainer.Children.FirstOrDefault(x =>
-                    x is Border border &&
-                    border.Content is Grid grid &&
-                    grid.Children.OfType<Label>().FirstOrDefault()?.Text == tag);
-
-                if (tagButton != null)
-                {
-                    SelectedTagsContainer.Children.Remove(tagButton);
-                }
-
-                FilterFavorites();
-            }
-        }
-
-        private void RemoveFromFavorites(FavoriteRecipe recipe)
-        {
-            if (Favorites.Remove(recipe))
-            {
-                FilteredFavorites.Remove(recipe);
-                UpdateSearchResultsText();
-            }
-        }
-
-        private async void OnViewRecipe(FavoriteRecipe recipe)
-        {
-            if (recipe == null) return;
-
-            var navigationParameter = new Dictionary<string, object>
-            {
-                { "Recipe", recipe }
-            };
-            await Shell.Current.GoToAsync("RecipeDetailsPage", navigationParameter);
         }
 
         private void UpdateSearchResultsText()
         {
             string text = $"{FilteredFavorites.Count} favorite";
             text += FilteredFavorites.Count == 1 ? " recipe" : " recipes";
-
             if (!string.IsNullOrWhiteSpace(SearchQuery))
-            {
                 text += $" matching '{SearchQuery}'";
-            }
-
-            if (SelectedTags.Any())
-            {
-                text += $" with tags: {string.Join(", ", SelectedTags)}";
-            }
-
             SearchResultsText = text;
         }
 
-        private void CreateTagButton(string tag)
+        private async Task ShowFilterModal()
         {
-            var grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-            var label = new Label
-            {
-                Text = tag,
-                TextColor = Colors.White,
-                FontSize = 12,
-                VerticalOptions = LayoutOptions.Center
-            };
-
-            var removeButton = new ImageButton
-            {
-                Source = "close.svg",
-                HeightRequest = 16,
-                WidthRequest = 16,
-                BackgroundColor = Colors.Transparent,
-                Command = new Command(() => RemoveTag(tag)),
-                Margin = new Thickness(3, 0, 0, 0)
-            };
-
-            Grid.SetColumn(removeButton, 1);
-            grid.Children.Add(label);
-            grid.Children.Add(removeButton);
-
-            var button = new Border
-            {
-                StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(12) },
-                BackgroundColor = Color.FromArgb("#5b8224"),
-                Padding = new Thickness(8, 4),
-                Content = grid
-            };
-
-            SelectedTagsContainer.Children.Add(button);
+            await Shell.Current.Navigation.PushModalAsync(
+                new FavoritesFilterModal(Favorites.ToList(), (selectedCategories, selectedAreas) =>
+                {
+                    var filtered = Favorites.Where(meal =>
+                        (selectedCategories.Count == 0 || selectedCategories.Contains(meal.Category)) &&
+                        (selectedAreas.Count == 0 || selectedAreas.Contains(meal.Area))
+                    ).ToList();
+                    FilteredFavorites = new ObservableCollection<Meal>(filtered);
+                    UpdateSearchResultsText();
+                })
+            );
         }
-    }
-
-    public class FavoriteRecipe
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string Image { get; set; } = string.Empty;
-        public string CookTime { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
-        public List<string> Tags { get; set; } = new List<string>();
     }
 } 

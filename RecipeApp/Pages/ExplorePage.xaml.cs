@@ -1,18 +1,24 @@
 using Microsoft.Maui.Controls.Shapes;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using RecipeApp.Services;
+using RecipeApp.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
+using RecipeApp.ViewModels;
 
 namespace RecipeApp.Pages
 {
     [QueryProperty(nameof(SelectedTag), "SelectedTag")]
     public partial class ExplorePage : ContentPage
     {
+        private readonly IMealService _mealService;
         private ObservableCollection<string> _tags = new();
         private ObservableCollection<string> _selectedTags = new();
         private ObservableCollection<string> _filteredTags = new();
         private string _searchQuery = string.Empty;
-        private string _searchResultsText = string.Empty;
         private string _selectedTag;
+        private bool _isRefreshing;
+        private List<Meal> _allMeals = new();
 
         public ObservableCollection<string> Tags
         {
@@ -31,6 +37,7 @@ namespace RecipeApp.Pages
             {
                 _selectedTags = value;
                 OnPropertyChanged();
+                FilterMeals();
             }
         }
 
@@ -52,16 +59,7 @@ namespace RecipeApp.Pages
                 _searchQuery = value;
                 OnPropertyChanged();
                 FilterTags();
-            }
-        }
-
-        public string SearchResultsText
-        {
-            get => _searchResultsText;
-            set
-            {
-                _searchResultsText = value;
-                OnPropertyChanged();
+                FilterMeals();
             }
         }
 
@@ -78,60 +76,226 @@ namespace RecipeApp.Pages
             }
         }
 
+        public bool IsRefreshing
+        {
+            get => _isRefreshing;
+            set
+            {
+                _isRefreshing = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ICommand GoBackCommand { get; }
         public ICommand SearchCommand { get; }
         public ICommand AddTagCommand { get; }
         public ICommand RemoveTagCommand { get; }
+        public ICommand RefreshCommand { get; }
+        public ICommand LoadRandomMealsCommand { get; }
 
-        public ExplorePage()
+        public ExplorePage(IMealService mealService)
         {
             InitializeComponent();
-            BindingContext = this;
+            _mealService = mealService;
+            BindingContext = new ExploreViewModel(_mealService);
 
             // Initialize commands
             GoBackCommand = new Command(async () => await GoBack());
             SearchCommand = new Command(async () => await Search());
             AddTagCommand = new Command<string>(AddTag);
             RemoveTagCommand = new Command<string>(RemoveTag);
+            RefreshCommand = new Command(async () => await Refresh());
+            LoadRandomMealsCommand = new Command(async () => await LoadRandomMeals());
 
             // Initialize collections
-            Tags = new ObservableCollection<string>
-            {
-                "Breakfast", "Lunch", "Dinner", "Dessert", "Snacks",
-                "Vegetarian", "Vegan", "Gluten-Free", "Quick & Easy",
-                "Healthy", "Comfort Food", "Italian", "Mexican", "Asian",
-                "Mediterranean", "American", "Indian", "Thai", "Japanese"
-            };
-
-            FilteredTags = new ObservableCollection<string>(Tags);
             SelectedTags = new ObservableCollection<string>();
 
-            // Initialize search results text
-            UpdateSearchResultsText();
+            // Load initial data
+            LoadInitialData();
+        }
+
+        private async void LoadInitialData()
+        {
+            try
+            {
+                IsBusy = true;
+                var categories = await _mealService.GetCategoriesAsync();
+                var areas = await _mealService.GetAreasAsync();
+
+                if (categories == null || !categories.Any())
+                {
+                    await DisplayAlert("Error", "Failed to load categories", "OK");
+                    return;
+                }
+
+                if (areas == null || !areas.Any())
+                {
+                    await DisplayAlert("Error", "Failed to load areas", "OK");
+                    return;
+                }
+
+                // Create tag buttons for categories
+                foreach (var category in categories)
+                {
+                    var tagButton = new Border
+                    {
+                        BackgroundColor = Color.FromArgb("#5b8224"),
+                        StrokeShape = new RoundRectangle { CornerRadius = 15 },
+                        Padding = new Thickness(10, 5),
+                        Margin = new Thickness(5, 0)
+                    };
+
+                    var label = new Label
+                    {
+                        Text = category.Name,
+                        TextColor = Colors.White,
+                        FontSize = 14,
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center
+                    };
+
+                    tagButton.Content = label;
+
+                    var tapGesture = new TapGestureRecognizer();
+                    tapGesture.Tapped += (s, e) => OnTagTapped(category.Name);
+                    tagButton.GestureRecognizers.Add(tapGesture);
+
+                    TagsContainer.Children.Add(tagButton);
+                }
+
+                // Create tag buttons for areas
+                foreach (var area in areas)
+                {
+                    var tagButton = new Border
+                    {
+                        BackgroundColor = Color.FromArgb("#D98236"),
+                        StrokeShape = new RoundRectangle { CornerRadius = 15 },
+                        Padding = new Thickness(10, 5),
+                        Margin = new Thickness(5, 0)
+                    };
+
+                    var label = new Label
+                    {
+                        Text = area,
+                        TextColor = Colors.White,
+                        FontSize = 14,
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center
+                    };
+
+                    tagButton.Content = label;
+
+                    var tapGesture = new TapGestureRecognizer();
+                    tapGesture.Tapped += (s, e) => OnTagTapped(area);
+                    tagButton.GestureRecognizers.Add(tapGesture);
+
+                    TagsContainer.Children.Add(tagButton);
+                }
+
+                // Load initial meals
+                await LoadRandomMeals();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", $"Failed to load data: {ex.Message}", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task GoBack()
         {
-            await Shell.Current.GoToAsync("..");
+            await Shell.Current.GoToAsync("..", true);
         }
 
-        private Task Search()
+        private async Task Search()
         {
-            // Simulate search with selected tags and query
-            string searchDescription = "Searching for recipes";
+            if (string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                await LoadRandomMeals();
+                return;
+            }
 
+            try
+            {
+                IsBusy = true;
+                var searchResults = await _mealService.SearchMealsAsync(SearchQuery);
+                
+                if (!searchResults.Any())
+                {
+                    await DisplayAlert("No Results", $"No meals found matching '{SearchQuery}'", "OK");
+                    return;
+                }
+
+                _allMeals = searchResults;
+                FilterMeals();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", "Failed to search meals: " + ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        private void FilterMeals()
+        {
+            if (_allMeals == null || !_allMeals.Any())
+            {
+                return;
+            }
+
+            var filteredMeals = _allMeals.AsEnumerable();
+
+            // Apply search query filter
             if (!string.IsNullOrWhiteSpace(SearchQuery))
             {
-                searchDescription += $" containing '{SearchQuery}'";
+                filteredMeals = filteredMeals.Where(m => 
+                    m.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    m.Category.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    m.Area.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase));
             }
 
-            if (SelectedTags.Count > 0)
+            // Apply tag filters
+            if (SelectedTags.Any())
             {
-                searchDescription += $" with tags: {string.Join(", ", SelectedTags)}";
+                filteredMeals = filteredMeals.Where(m =>
+                {
+                    // Check if meal matches any of the selected tags
+                    return SelectedTags.Any(tag =>
+                    {
+                        // Check category
+                        if (m.Category.Equals(tag, StringComparison.OrdinalIgnoreCase))
+                            return true;
+
+                        // Check area (cuisine)
+                        if (m.Area.Equals(tag, StringComparison.OrdinalIgnoreCase))
+                            return true;
+
+                        // Check if tag is in meal tags
+                        if (!string.IsNullOrEmpty(m.Tags))
+                        {
+                            var mealTags = m.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                               .Select(t => t.Trim());
+                            return mealTags.Any(mealTag => 
+                                mealTag.Equals(tag, StringComparison.OrdinalIgnoreCase));
+                        }
+
+                        return false;
+                    });
+                });
             }
 
-            SearchResultsText = searchDescription;
-            return Task.CompletedTask;
+            // Update the meals collection
+            ((ExploreViewModel)BindingContext).Meals.Clear();
+            foreach (var meal in filteredMeals)
+            {
+                ((ExploreViewModel)BindingContext).Meals.Add(meal);
+            }
         }
 
         private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
@@ -158,7 +322,6 @@ namespace RecipeApp.Pages
             {
                 SelectedTags.Add(tag);
                 CreateTagButton(tag);
-                UpdateSearchResultsText();
             }
         }
 
@@ -176,25 +339,6 @@ namespace RecipeApp.Pages
             {
                 SelectedTagsContainer.Children.Remove(tagButton);
             }
-
-            UpdateSearchResultsText();
-        }
-
-        private void UpdateSearchResultsText()
-        {
-            string searchDescription = "Searching for recipes..";
-
-            if (!string.IsNullOrWhiteSpace(SearchQuery))
-            {
-                searchDescription += $" containing '{SearchQuery}'";
-            }
-
-            if (SelectedTags.Count > 0)
-            {
-                searchDescription += $" with tags: {string.Join(", ", SelectedTags)}";
-            }
-
-            SearchResultsText = searchDescription;
         }
 
         private void CreateTagButton(string tag)
@@ -208,23 +352,9 @@ namespace RecipeApp.Pages
                 Text = tag,
                 TextColor = Colors.White,
                 FontSize = 12,
-                VerticalOptions = LayoutOptions.Center
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center
             };
-
-            var removeButton = new ImageButton
-            {
-                Source = "close.svg",
-                HeightRequest = 16,
-                WidthRequest = 16,
-                BackgroundColor = Colors.Transparent,
-                Command = RemoveTagCommand,
-                CommandParameter = tag,
-                Margin = new Thickness(3, 0, 0, 0)
-            };
-
-            Grid.SetColumn(removeButton, 1);
-            grid.Children.Add(label);
-            grid.Children.Add(removeButton);
 
             var button = new Border
             {
@@ -233,15 +363,64 @@ namespace RecipeApp.Pages
                 StrokeThickness = 0,
                 BackgroundColor = Color.FromArgb("#5b8224"),
                 Padding = new Thickness(8, 4),
-                Content = grid
+                Content = label,
+                Margin = new Thickness(4)
             };
 
-            SelectedTagsContainer.Children.Add(button);
+            var tapGesture = new TapGestureRecognizer();
+            tapGesture.Tapped += (s, e) => AddTag(tag);
+            button.GestureRecognizers.Add(tapGesture);
+
+            TagsContainer.Children.Add(button);
+        }
+
+        private async Task Refresh()
+        {
+            IsRefreshing = true;
+            await LoadRandomMeals();
+            IsRefreshing = false;
+        }
+
+        private async Task LoadRandomMeals()
+        {
+            try
+            {
+                IsBusy = true;
+                var randomMeals = await _mealService.GetRandomMealsAsync(10);
+                
+                if (!randomMeals.Any())
+                {
+                    await DisplayAlert("Error", "Failed to load random meals. Please check your internet connection and try again.", "OK");
+                    return;
+                }
+
+                _allMeals = randomMeals;
+                FilterMeals();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Error", "Failed to load random meals: " + ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private void ScrollView_Scrolled(object sender, ScrolledEventArgs e)
         {
             // This method is required by the XAML but we don't need any special scroll handling here
+        }
+
+        private void OnTagTapped(string tag)
+        {
+            // Implementation of OnTagTapped method
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadRandomMeals();
         }
     }
 }

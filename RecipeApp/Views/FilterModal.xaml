@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:RecipeApp.ViewModels"
+             xmlns:models="clr-namespace:RecipeApp.Models"
+             x:Class="RecipeApp.Views.FilterModal"
+             x:DataType="vm:MealViewModel"
+             BackgroundColor="#FFF9F4"
+             Title="Filter Meals">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <Border Grid.Row="0"
+                BackgroundColor="#D98236"
+                HeightRequest="50"
+                StrokeThickness="0">
+            <Grid ColumnDefinitions="*,Auto" Padding="10">
+                <Label Text="Select Filters"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       VerticalOptions="Center"/>
+                <Button Grid.Column="1"
+                        Text="Apply"
+                        Command="{Binding ApplyFiltersCommand}"
+                        BackgroundColor="#5b8224"
+                        TextColor="White"
+                        HeightRequest="35"
+                        WidthRequest="80"
+                        CornerRadius="5"/>
+            </Grid>
+        </Border>
+
+        <!-- Filter Options -->
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="20" Spacing="20">
+                <!-- Categories -->
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Categories"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50"/>
+                    <Frame BorderColor="#5b8224"
+                           CornerRadius="10"
+                           Padding="10"
+                           BackgroundColor="White">
+                        <CollectionView ItemsSource="{Binding Categories}"
+                                      HeightRequest="200">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:Category">
+                                    <Grid Padding="10" ColumnDefinitions="Auto,*">
+                                        <CheckBox Grid.Column="0"
+                                                 IsChecked="{Binding IsSelected}"
+                                                 Color="#5b8224"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Name}"
+                                               Margin="10,0,0,0"
+                                               TextColor="#2C3E50"
+                                               FontSize="16"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Frame>
+                </VerticalStackLayout>
+
+                <!-- Areas -->
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Cuisine Areas"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#2C3E50"/>
+                    <Frame BorderColor="#5b8224"
+                           CornerRadius="10"
+                           Padding="10"
+                           BackgroundColor="White">
+                        <CollectionView ItemsSource="{Binding Areas}"
+                                      HeightRequest="200">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:SelectableArea">
+                                    <Grid Padding="10" ColumnDefinitions="Auto,*">
+                                        <CheckBox Grid.Column="0"
+                                                 IsChecked="{Binding IsSelected}"
+                                                 Color="#5b8224"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding Area}"
+                                               Margin="10,0,0,0"
+                                               TextColor="#2C3E50"
+                                               FontSize="16"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Frame>
+                </VerticalStackLayout>
+
+                <!-- Clear Filters Button -->
+                <Button Text="Clear Filters"
+                        Command="{Binding ClearFiltersCommand}"
+                        BackgroundColor="#D98236"
+                        TextColor="White"
+                        HeightRequest="40"
+                        CornerRadius="5"
+                        Margin="0,10,0,0"/>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage> 

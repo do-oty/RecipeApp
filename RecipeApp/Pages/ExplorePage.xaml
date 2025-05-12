@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:RecipeApp.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="RecipeApp.Pages.ExplorePage"
              Shell.NavBarIsVisible="False"
              BackgroundColor="#FFF9F4">
@@ -58,13 +59,22 @@
                     
                     </HorizontalStackLayout>
                 </ScrollView>
+
+                <!-- Available Tags -->
+                <ScrollView Orientation="Horizontal"
+                           HorizontalScrollBarVisibility="Never"
+                           Margin="0,0,0,5">
+                    <HorizontalStackLayout x:Name="TagsContainer"
+                                         Spacing="5">
+                    </HorizontalStackLayout>
+                </ScrollView>
             </VerticalStackLayout>
         </Border>
 
-        <!-- Tags Carousel -->
+        <!-- Main Content -->
         <ScrollView Grid.Row="2" Scrolled="ScrollView_Scrolled">
             <VerticalStackLayout>
-         
+                <!-- Tags Carousel -->
                 <CollectionView x:Name="TagsCollection"
                               HeightRequest="100"
                               Margin="0,10,0,0"
@@ -85,27 +95,26 @@
                                                               CommandParameter="{Binding}"/>
                                     </Border.GestureRecognizers>
                                     <VerticalStackLayout>
-                                   
+                                        <Label Text="{Binding}"
+                                               TextColor="White"
+                                               FontSize="14"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
                                     </VerticalStackLayout>
-                                </Border>
-                                <Label Text="{Binding}"
-                                       FontSize="14"
-                                       FontAutoScalingEnabled="True"
-                                       TextColor="#5b8224"
-                                       HorizontalOptions="Center"
-                                       Margin="5,0,5,0"
-                                       LineBreakMode="WordWrap"
-                                       MaxLines="2">
-                                    <Label.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AddTagCommand}"
-                                                              CommandParameter="{Binding}"/>
-                                    </Label.GestureRecognizers>
-                                </Label>
+                                </Border> 
                             </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
+                <!-- Add this label above the CollectionView for recipe count -->
+                <Label Grid.Row="2"
+                       Text="{Binding SearchResultsText}"
+                       FontSize="16"
+                       TextColor="#666"
+                       Margin="10,0,0,0"/>
+
+                <!-- Meals List -->
                 <Label Text="Search Results"
                        FontSize="20"
                        FontAttributes="Bold"
@@ -113,10 +122,60 @@
                        HorizontalOptions="Start"
                        Margin="10,30,0,10"/>
 
-                <Label Text="{Binding SearchResultsText}"
-                       TextColor="#5b8224"
-                       HorizontalOptions="Center"
-                       Margin="10,0,10,20"/>
+                <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                            Command="{Binding RefreshCommand}">
+                    <CollectionView ItemsSource="{Binding Meals}"
+                                  SelectedItem="{Binding SelectedMeal}"
+                                  SelectionMode="Single">
+                        <CollectionView.EmptyView>
+                            <VerticalStackLayout HorizontalOptions="Center"
+                                               VerticalOptions="Center">
+                                <Label Text="No meals found"
+                                       FontSize="18"
+                                       HorizontalOptions="Center"/>
+                                <Button Text="Load Random Meals"
+                                        Command="{Binding LoadRandomMealsCommand}"
+                                        Margin="0,10,0,0"/>
+                            </VerticalStackLayout>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Margin="10"
+                                       Padding="10"
+                                       BorderColor="LightGray"
+                                       CornerRadius="10">
+                                    <Grid ColumnDefinitions="Auto,*"
+                                          RowDefinitions="Auto,Auto,Auto">
+                                        <Image Grid.Column="0"
+                                               Grid.RowSpan="3"
+                                               Source="{Binding ThumbnailUrl}"
+                                               HeightRequest="100"
+                                               WidthRequest="100"
+                                               Aspect="AspectFill"/>
+                                        <Label Grid.Column="1"
+                                               Grid.Row="0"
+                                               Text="{Binding Name}"
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               Margin="10,0,0,0"/>
+                                        <Label Grid.Column="1"
+                                               Grid.Row="1"
+                                               Text="{Binding Category}"
+                                               FontSize="14"
+                                               TextColor="Gray"
+                                               Margin="10,5,0,0"/>
+                                        <Label Grid.Column="1"
+                                               Grid.Row="2"
+                                               Text="{Binding Area}"
+                                               FontSize="14"
+                                               TextColor="#5b8224"
+                                               Margin="10,5,0,0"/>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </RefreshView>
             </VerticalStackLayout>
         </ScrollView>
 

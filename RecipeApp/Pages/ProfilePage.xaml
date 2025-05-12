@@ -4,95 +4,115 @@
              xmlns:controls="clr-namespace:RecipeApp.Controls"
              x:Class="RecipeApp.Pages.ProfilePage"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="#D98236">
-
-    <Grid RowDefinitions="120,*,Auto" BackgroundColor="#FFF9F4">
-        <!-- Header Section with Profile Info -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,*" BackgroundColor="#D98236">
-     
+             Padding="0"
+             BackgroundColor="#FFF9F4">
+    <Grid RowDefinitions="Auto,*,Auto">
+        <!-- Header -->
+        <Grid Padding="20,40,20,10" BackgroundColor="#D98236">
+            <Image Source="logo_pantry.svg"
+                   HeightRequest="40"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
         </Grid>
 
         <!-- Main Content -->
-        <Grid Grid.Row="1" 
-              RowDefinitions="Auto,Auto,Auto,Auto"
-              Margin="0,-50,0,0"
-              RowSpacing="20"
-              Padding="20,0,20,20">
-            
-            <!-- Profile Card -->
-            <Border Grid.Row="0"
-                    BackgroundColor="White"
-                    Stroke="#5b8224"
-                    StrokeThickness="1"
-                    Padding="20"
-                    StrokeShape="RoundRectangle 20">
-                <Grid RowDefinitions="Auto,Auto" RowSpacing="15">
-                    <VerticalStackLayout Grid.Row="0" Spacing="5">
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,0,20,20" Spacing="20">
+                <!-- Guest User Notice -->
+                <Border x:Name="GuestUserNotice"
+                        BackgroundColor="#FFF3E0"
+                        Stroke="#FFA726"
+                        StrokeThickness="1"
+                        Padding="15"
+                        Margin="0,15,0,0"
+                        StrokeShape="RoundRectangle 10"
+                        IsVisible="False">
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Guest User"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#FFA726"/>
+                        <Label Text="Sign up to access all features and save your preferences"
+                               FontSize="14"
+                               TextColor="#666"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Profile Card (now just info) -->
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 15" Stroke="#456B19" StrokeThickness="1" Padding="20" Margin="0,15,0,0">
+                    <VerticalStackLayout Spacing="15">
                         <Label Text="Email"
                                FontSize="14"
                                TextColor="#666"/>
-                        <Label Text="kczenarosa2003@gmail.com"
+                        <Label x:Name="EmailLabel"
                                FontSize="16"
                                FontAttributes="Bold"
-                               TextColor="#5b8224"/>
+                               TextColor="#456B19"/>
                     </VerticalStackLayout>
-                    <Button Grid.Row="1"
-                            Text="Verify email"
-                            BackgroundColor="#FF4C4C"
-                            TextColor="White"
-                            FontSize="14"
-                            CornerRadius="25"
-                            HeightRequest="40"
-                            WidthRequest="120"
-                            HorizontalOptions="Start"/>
-                </Grid>
-            </Border>
+                </Border>
 
-            <!-- Connected Accounts Section -->
-            <VerticalStackLayout Grid.Row="1" Spacing="15">
+                <!-- Account Management -->
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 15" Stroke="#456B19" StrokeThickness="1" Padding="20">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Account Management"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#456B19"/>
+                        <Border StrokeThickness="0.8"
+                                StrokeShape="RoundRectangle 10"
+                                Stroke="#456B19"
+                                BackgroundColor="White"
+                                Padding="15,10">
+                            <Label Text="Change Email Address"
+                                   TextColor="#456B19"
+                                   FontAttributes="Bold">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnChangeEmailTapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+                        <Border StrokeThickness="0.8"
+                                StrokeShape="RoundRectangle 10"
+                                Stroke="#456B19"
+                                BackgroundColor="White"
+                                Padding="15,10">
+                            <Label Text="Reset Password"
+                                   TextColor="#456B19"
+                                   FontAttributes="Bold">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnResetPasswordTapped"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Sign Out Button -->
+                <Button Text="Sign Out"
+                        BackgroundColor="#FF4C4C"
+                        TextColor="White"
+                        FontSize="14"
+                        CornerRadius="25"
+                        HeightRequest="40"
+                        WidthRequest="120"
+                        HorizontalOptions="Start"
+                        Clicked="OnSignOutClicked"/>
+
+                <!-- Divider -->
+                <BoxView HeightRequest="1" Color="#EEE" HorizontalOptions="Fill" />
+
+                <!-- Connected Accounts Section -->
                 <Label Text="Connected accounts"
                        FontSize="20"
                        FontAttributes="Bold"
-                       TextColor="#5b8224"
-                       Margin="5,0,0,5"/>
-
-                <!-- Facebook Connection -->
+                       TextColor="#456B19"/>
                 <Border BackgroundColor="White"
                         StrokeShape="RoundRectangle 15"
-                        Stroke="#5b8224"
+                        Stroke="#456B19"
                         StrokeThickness="1"
                         Padding="20">
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
-                        <Image Source="facebook_icon.svg"
-                               HeightRequest="24"
-                               WidthRequest="24"
-                               VerticalOptions="Center"/>
-                        <VerticalStackLayout Grid.Column="1" Spacing="2">
-                            <Label Text="Facebook"
-                                   FontSize="16"
-                                   FontAttributes="Bold"
-                                   TextColor="#5b8224"/>
-                            <Label Text="Connected"
-                                   FontSize="14"
-                                   TextColor="#666"/>
-                        </VerticalStackLayout>
-                        <ImageButton Grid.Column="2"
-                                   Source="close.svg"
-                                   HeightRequest="24"
-                                   WidthRequest="24"
-                                   BackgroundColor="Transparent"
-                                   Clicked="OnDisconnectFacebook"/>
-                    </Grid>
-                </Border>
-
-                <!-- Google Connection -->
-                <Border BackgroundColor="White"
-                        StrokeShape="RoundRectangle 15"
-                        Stroke="#5b8224"
-                        StrokeThickness="1"
-                        Padding="20">
-                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="15">
-                        <Image Source="google_icon.svg"
+                        <Image Source="google.svg"
                                HeightRequest="24"
                                WidthRequest="24"
                                VerticalOptions="Center"/>
@@ -100,52 +120,38 @@
                             <Label Text="Google"
                                    FontSize="16"
                                    FontAttributes="Bold"
-                                   TextColor="#5b8224"/>
-                            <Label Text="Connected"
+                                   TextColor="#456B19"/>
+                            <Label x:Name="GoogleConnectionLabel"
+                                   Text="Not Connected"
                                    FontSize="14"
                                    TextColor="#666"/>
                         </VerticalStackLayout>
-                        <ImageButton Grid.Column="2"
-                                   Source="close.svg"
-                                   HeightRequest="24"
-                                   WidthRequest="24"
-                                   BackgroundColor="Transparent"
-                                   Clicked="OnDisconnectGoogle"/>
+                        <Button Grid.Column="2"
+                                Text="Connect"
+                                BackgroundColor="#456B19"
+                                TextColor="White"
+                                FontSize="14"
+                                CornerRadius="20" 
+                                HeightRequest="35"
+                                WidthRequest="100"
+                                Clicked="OnConnectGoogleClicked"/>
                     </Grid>
                 </Border>
+
+                <!-- Delete Account -->
+                <Label Text="Delete Account"
+                       TextColor="#FF4C4C"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       Margin="0,0,0,0">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnDeleteAccountTapped"/>
+                    </Label.GestureRecognizers>
+                </Label>
             </VerticalStackLayout>
+        </ScrollView>
 
-            <!-- Account Actions -->
-            <VerticalStackLayout Grid.Row="2" Spacing="20">
-                <!-- Sign Out Button -->
-                <Button Text="Sign Out"
-                        BackgroundColor="White"
-                        TextColor="#666666"
-                        FontSize="16"
-                        FontAttributes="Bold"
-                        CornerRadius="25"
-                        HeightRequest="50"
-                        WidthRequest="300"
-                        BorderColor="#666666"
-                        BorderWidth="1"
-                        HorizontalOptions="Center"
-                        Margin="0,10,0,0"/>
-
-                <!-- Delete Account Button -->
-                <Button Text="Delete Account"
-                        BackgroundColor="Transparent"
-                        TextColor="#FF4C4C"
-                        FontSize="16"
-                        FontAttributes="Bold"
-                        CornerRadius="25"
-                        HeightRequest="50"
-                        WidthRequest="300"
-                        BorderColor="#FF4C4C"
-                        BorderWidth="1"
-                        HorizontalOptions="Center"/>
-            </VerticalStackLayout>
-        </Grid>
-
-        <controls:CustomTabBar Grid.Row="2"/>
+        <!-- Tab Bar -->
+        <controls:CustomTabBar Grid.Row="2" />
     </Grid>
 </ContentPage>

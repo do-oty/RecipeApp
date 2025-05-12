@@ -3,169 +3,218 @@
              x:Class="RecipeApp.Pages.LoginPage"
              Padding="0"
              Shell.NavBarIsVisible="False">
-    <ScrollView>
-        <Grid>
-            <Image Source="background2.png"
-                   Aspect="AspectFill"
-                   Opacity="1"
-                   HorizontalOptions="Fill"
-                   VerticalOptions="Fill" />
+    <Grid VerticalOptions="FillAndExpand" Padding="0" Margin="0">
+        <Image Source="background2.png"
+               Aspect="AspectFill"
+               Opacity="1"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill" />
+        <BoxView HorizontalOptions="Fill"
+                 VerticalOptions="Fill"
+                 Opacity="0.4">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#492407" Offset="0.0" />
+                    <GradientStop Color="#FFB16D" Offset="0.6" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+        <Grid RowDefinitions="Auto,*"
+              ColumnDefinitions="*,*"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
 
-            <BoxView HorizontalOptions="Fill"
-                     VerticalOptions="Fill"
-                     Opacity="0.4">
-                <BoxView.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#492407" Offset="0.0" />
-                        <GradientStop Color="#FFB16D" Offset="0.6" />
-                    </LinearGradientBrush>
-                </BoxView.Background>
-            </BoxView>
+            <Image Source="welcome_banner.svg"
+                   Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   WidthRequest="300"
+                   HeightRequest="200"
+                   VerticalOptions="Start"
+                   HorizontalOptions="Center">
+                <Image.Shadow>
+                    <Shadow Brush="Black"
+                            Opacity="1"
+                            Offset="5,5"
+                            Radius="20" />
+                </Image.Shadow>
+            </Image>
 
-            <VerticalStackLayout Padding="0" Spacing="0">
-                <Grid RowDefinitions="Auto,*"
-                      ColumnDefinitions="*,*"
-                      HorizontalOptions="Fill"
-                      VerticalOptions="Fill"
-                      HeightRequest="915"
-                      WidthRequest="415">
+            <Border BackgroundColor="#FFF9F4"
+                    StrokeShape="RoundRectangle 20"
+                    StrokeThickness="0.5"
+                    Padding="10"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
 
-                    <Image Source="welcome_banner.svg"
-                           Grid.Row="0"
-                           Grid.ColumnSpan="2"
-                           WidthRequest="300"
-                           HeightRequest="200"
-                           VerticalOptions="Start"
-                           HorizontalOptions="Center">
-                        <Image.Shadow>
-                            <Shadow Brush="Black"
-                                    Opacity="1"
-                                    Offset="5,5"
-                                    Radius="20" />
-                        </Image.Shadow>
-                    </Image>
+                <Border.Shadow>
+                    <Shadow Brush="#180C02"
+                            Opacity=".5"
+                            Offset="5,5"
+                            Radius="20" />
+                </Border.Shadow>
 
-                    <Border BackgroundColor="#FFF9F4"
-                            StrokeShape="RoundRectangle 20"
-                            StrokeThickness="0.5"
-                            Padding="10"
-                            Grid.Row="1"
-                            Grid.ColumnSpan="2"
-                            HorizontalOptions="Fill"
-                            VerticalOptions="Fill">
+                <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                          ColumnDefinitions="*,*"
+                          RowSpacing="10">
 
-                        <Border.Shadow>
-                            <Shadow Brush="#180C02"
-                                    Opacity=".5"
-                                    Offset="5,5"
-                                    Radius="20" />
-                        </Border.Shadow>
+                        <ImageButton Source="back_button2.svg"
+                                     Clicked="OnBackButtonTapped"
+                                     BackgroundColor="Transparent"
+                                     Margin="0,20,0,10"
+                                     Grid.Row="0"
+                                     Grid.Column="0"
+                                     HorizontalOptions="Start"
+                                     VerticalOptions="Start" />
 
-                        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                              ColumnDefinitions="*,*"
-                              WidthRequest="315"
-                              HeightRequest="800"
-                              RowSpacing="10">
+                        <Label Text="Log In"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#456B19"
+                               HorizontalOptions="Start"
+                               Grid.Row="1"
+                               Grid.ColumnSpan="2" />
 
-                            <ImageButton Source="back_button2.svg"
-                                         Clicked="OnBackButtonTapped"
-                                         BackgroundColor="Transparent"
-                                         Margin="0,75,0,25"
-                                         Grid.Row="0"
-                                         Grid.Column="0"
-                                         HorizontalOptions="Start"
-                                         VerticalOptions="Start" />
+                        <Border Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                StrokeThickness="0.8"
+                                StrokeShape="RoundRectangle 15,15,15,15"
+                                Padding="5"
+                                BackgroundColor="White"
+                                Stroke="#456B19">
+                            <Entry x:Name="EmailEntry"
+                                   Placeholder="Email Address"
+                                   TextColor="Black" />
+                        </Border>
 
-                            <Label Text="Log In"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   TextColor="#456B19"
-                                   HorizontalOptions="Start"
-                                   Grid.Row="1"
-                                   Grid.ColumnSpan="2" />
-
-                            <Border Grid.Row="2"
-                                    Grid.ColumnSpan="2"
-                                    StrokeThickness="0.8"
-                                    StrokeShape="RoundRectangle 15"
-                                    Padding="5"
-                                    BackgroundColor="White"
-                                    Stroke="#456B19">
-                                <Entry x:Name="EmailEntry"
-                                       Placeholder="Email Address" />
-                            </Border>
-
-                            <Border Grid.Row="3"
-                                    Grid.ColumnSpan="2"
-                                    StrokeThickness="0.8"
-                                    Padding="5"
-                                    StrokeShape="RoundRectangle 15"
-                                    Stroke="#456B19"
-                                    BackgroundColor="White">
+                        <Border Grid.Row="3"
+                                Grid.ColumnSpan="2"
+                                StrokeThickness="0.8"
+                                Padding="5"
+                                StrokeShape="RoundRectangle 15,15,15,15"
+                                Stroke="#456B19"
+                                BackgroundColor="White">
+                            <Grid ColumnDefinitions="*, Auto">
                                 <Entry x:Name="PasswordEntry"
                                        Placeholder="Password"
-                                       IsPassword="True" />
-                            </Border>
+                                       IsPassword="True"
+                                       TextColor="Black"
+                                       Grid.Column="0"/>
+                                <Image x:Name="PasswordValidationIcon"
+                                       WidthRequest="15"
+                                       HeightRequest="20"
+                                       Margin="0,0,10,0"
+                                       Grid.Column="1"
+                                       IsVisible="False"/>
+                            </Grid>
+                        </Border>
 
+                        <Grid Grid.Row="5" Grid.ColumnSpan="2" ColumnDefinitions="Auto,Auto,*" Margin="0,-20,10,-10">
+                            <CheckBox x:Name="RememberMeCheckBox" Color="#456B19" VerticalOptions="Center" Grid.Column="0"/>
+                            <Label Text="Remember Me"
+                                   FontFamily="OpenSans-Light"
+                                   TextColor="#456B19"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Start"
+                                   Grid.Column="1" />
                             <Label Text="Forgot Password?"
                                    FontAttributes="Bold"
                                    TextColor="#456B19"
-                                   Grid.Row="4"
-                                   HorizontalOptions="Start"
-                                   Margin="10,0,0,0" />
-
-                            <Grid Grid.Row="5" Grid.ColumnSpan="2">
-                                <Border StrokeThickness="0.8"
-                                        Padding="5"
-                                        StrokeShape="RoundRectangle 15"
-                                        Stroke="#456B19"
-                                        BackgroundColor="White">
-                                    <Entry x:Name="ConfirmPasswordEntry"
-                                           Placeholder="Confirm Password"
-                                           IsPassword="True"
-                                           TextChanged="OnConfirmPasswordTextChanged" />
-                                </Border>
-                                <Image x:Name="ConfirmPasswordValidationIcon"
-                                       Source="check.svg"
-                                       HeightRequest="15"
-                                       WidthRequest="20"
-                                       HorizontalOptions="End"
-                                       VerticalOptions="Center"
-                                       Margin="0,0,10,0"
-                                       IsVisible="False" />
-                            </Grid>
-
-                            <HorizontalStackLayout Grid.Row="6"
-                                                   Grid.ColumnSpan="2"
-                                                   HorizontalOptions="Start"
-                                                   Margin="0,0,0,0">
-                                <CheckBox x:Name="RememberMeCheckBox" Color="#456B19" Margin="0,-15,-8,0"/>
-                                <Label Text="Remember Me"
-                                       FontAttributes="Bold"
-                                       TextColor="#456B19"
-                                       HorizontalOptions="Start"
-                                        />
-                            </HorizontalStackLayout>
-
-                            <Border Grid.Row="7"
-                                    Grid.ColumnSpan="2"
-                                    StrokeThickness="0.8"
-                                    StrokeShape="RoundRectangle 15"
-                                    Stroke="#456B19"
-                                    Background="White"
-                                    HeightRequest="45">
-                                <Button Text="Log In Now"
-                                        FontFamily="OpenSans-Light"
-                                        BackgroundColor="#456B19"
-                                        FontAttributes="Bold"
-                                        TextColor="White"
-                                        FontSize="15"
-                                        Padding="20,0" />
-                            </Border>
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End"
+                                   Grid.Column="2">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnForgotPasswordTapped" />
+                                </Label.GestureRecognizers>
+                            </Label>
                         </Grid>
-                    </Border>
+
+                        <Border Grid.Row="6"
+                                Grid.ColumnSpan="2"
+                                StrokeThickness="0.8"
+                                StrokeShape="RoundRectangle 15,15,15,15"
+                                Stroke="#456B19"
+                                Background="White"
+                                HeightRequest="45">
+                            <Button Text="Log In Now"
+                                    FontFamily="OpenSans-Light"
+                                    BackgroundColor="#456B19"
+                                    FontAttributes="Bold"
+                                    TextColor="White"
+                                    FontSize="15"
+                                    Padding="20,0"
+                                    Clicked="OnLoginButtonClicked" />
+                        </Border>
+
+                        <Label Grid.Row="7"
+                               VerticalOptions="Start"
+                               HorizontalOptions="Center"
+                               Grid.ColumnSpan="2">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Don't have an account? "
+                                          FontFamily="OpenSans-Light"
+                                          TextColor="#5b8224" />
+                                    <Span Text="Sign Up"
+                                          FontAttributes="Bold"
+                                          FontFamily="OpenSans"
+                                          TextColor="#5b8224" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSignUpTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                        <HorizontalStackLayout Grid.Row="8"
+                                               Grid.ColumnSpan="2"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               Spacing="10"
+                                               Padding="10">
+                            <BoxView BackgroundColor="#5b8224"
+                                     HeightRequest="1"
+                                     WidthRequest="130"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Fill" />
+
+                            <Label Text="or"
+                                   FontFamily="OpenSans-Light"
+                                   TextColor="#5b8224"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center" />
+
+                            <BoxView BackgroundColor="#5b8224"
+                                     HeightRequest="1"
+                                     WidthRequest="130"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Fill" />
+                        </HorizontalStackLayout>
+
+                        <Border Grid.Row="9"
+                                Grid.ColumnSpan="2"
+                                StrokeThickness="0.8"
+                                StrokeShape="RoundRectangle 15,15,15,15"
+                                Stroke="#456B19"
+                                Background="White"
+                                HeightRequest="45">
+                            <HorizontalStackLayout HorizontalOptions="Center"
+                                                   VerticalOptions="Center">
+                                <Image Source="google.svg" WidthRequest="25"/>
+                                <Button Text="Sign in with Google"
+                                        FontFamily="OpenSans-Light"
+                                        BackgroundColor="white"
+                                        FontAttributes="Bold"
+                                        TextColor="#456B19"
+                                        FontSize="15"
+                                        Clicked="OnGoogleSignInClicked" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
                 </Grid>
-            </VerticalStackLayout>
+            </Border>
         </Grid>
-    </ScrollView>
+    </Grid>
 </ContentPage>

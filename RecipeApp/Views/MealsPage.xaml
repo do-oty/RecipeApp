@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:RecipeApp.ViewModels"
+             xmlns:models="clr-namespace:RecipeApp.Models"
+             x:Class="RecipeApp.Views.MealsPage"
+             x:DataType="vm:MealViewModel"
+             Title="Meals">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Search Bar -->
+        <SearchBar Grid.Row="0"
+                   Placeholder="Search meals..."
+                   Text="{Binding SearchTerm}"
+                   SearchCommand="{Binding SearchCommand}"
+                   Margin="10"/>
+
+        <!-- Meals List -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Meals}"
+                        SelectionMode="Single"
+                        SelectionChanged="OnMealSelected">
+            <CollectionView.EmptyView>
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <Label Text="No meals found"
+                           FontSize="18"
+                           HorizontalOptions="Center"/>
+                </StackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Meal">
+                    <Frame Margin="10"
+                           Padding="10"
+                           BorderColor="Gray"
+                           CornerRadius="10">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Image Grid.Column="0"
+                                   Source="{Binding Thumbnail}"
+                                   HeightRequest="100"
+                                   WidthRequest="100"
+                                   Aspect="AspectFill"/>
+                            <StackLayout Grid.Column="1"
+                                         Margin="10,0,0,0">
+                                <Label Text="{Binding Name}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"/>
+                                <Label Text="{Binding Category}"
+                                       FontSize="14"/>
+                                <Label Text="{Binding Area}"
+                                       FontSize="14"/>
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage> 

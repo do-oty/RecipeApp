@@ -1,0 +1,19 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    namespace "com.recipe.recipeapp"
+    compileSdkVersion 34
+    defaultConfig {
+        applicationId "com.recipe.recipeapp"
+        minSdkVersion 21
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+    }
+}
+
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.7.2')
+    implementation 'com.google.firebase:firebase-auth'
+} 

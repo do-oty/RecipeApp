@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:RecipeApp.Controls"
+             xmlns:models="clr-namespace:RecipeApp.Models"
+             x:Class="RecipeApp.Views.ExplorePage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#FFF9F4">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+    
+        <!-- Header -->
+        <Border Grid.Row="0"
+                BackgroundColor="#D98236"
+                HeightRequest="50"
+                Padding="5"
+                StrokeThickness="0" />
+
+        <!-- Search and Filter Bar -->
+        <Border Grid.Row="1"
+                BackgroundColor="#D98236"
+                Padding="2"
+                StrokeThickness="0"
+                ZIndex="2"
+                Margin="0,-5,0,0">
+            <Grid ColumnDefinitions="*,Auto" Padding="10">
+                <Border Grid.Column="0"
+                        BackgroundColor="White"
+                        HeightRequest="35"
+                        Stroke="#5b8224"
+                        Padding="5"
+                        Margin="0,0,10,0"
+                        StrokeShape="RoundRectangle 5,5,5,5"
+                        StrokeThickness="0">
+                    <SearchBar Placeholder="Search meals..."
+                              Text="{Binding SearchTerm}"
+                              SearchCommand="{Binding SearchMealsCommand}"
+                              BackgroundColor="Transparent"
+                              TextColor="Black"
+                              PlaceholderColor="#666666"
+                              FontSize="14"
+                              HeightRequest="40"
+                              Margin="10,0,0,0"/>
+                </Border>
+                <Button Grid.Column="1"
+                        Text="Filter"
+                        Command="{Binding ShowFilterModalCommand}"
+                        BackgroundColor="#5b8224"
+                        TextColor="White"
+                        HeightRequest="35"
+                        WidthRequest="80"
+                        CornerRadius="5"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="2" 
+              RowDefinitions="Auto,*"
+              Padding="20"
+              RowSpacing="15">
+
+            <!-- Results Header -->
+            <Label x:Name="RecipeCountLabel"
+                   Text="{Binding SearchResultsText, Mode=OneWay}"
+                   FontSize="16"
+                   TextColor="#666"/>
+
+            <!-- Meals Collection -->
+            <CollectionView Grid.Row="1"
+                           ItemsSource="{Binding Meals}"
+                           SelectionMode="Single"
+                           SelectionChanged="OnMealSelected">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image Source="empty_favorites.svg" HeightRequest="120" WidthRequest="120" Opacity="0.5"/>
+                        <Label Text="No meals found" FontSize="18" TextColor="#666" HorizontalOptions="Center"/>
+                        <Label Text="Try searching for a different recipe or adjusting your filters." FontSize="14" TextColor="#999" HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="10"
+                                Padding="10"
+                                Stroke="#5b8224"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10"
+                                BackgroundColor="White">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0"
+                                    StrokeShape="RoundRectangle 10"
+                                    BackgroundColor="Transparent"
+                                    HeightRequest="150"
+                                    WidthRequest="125"
+                                    Margin="0,0,10,0"
+                                    StrokeThickness="0">
+                                    <Image Source="{Binding Thumbnail}"
+                                           Aspect="AspectFill"
+                                           HeightRequest="150"
+                                           WidthRequest="125"/>
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                    <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold" TextColor="#456B19"/>
+                                    <Label Text="{Binding Category}" FontSize="14" TextColor="#666666"/>
+                                    <Label Text="{Binding Area}" FontSize="14" TextColor="#5b8224"/>
+                                    <Label Text="{Binding Instructions}" FontSize="13" TextColor="#999" LineBreakMode="TailTruncation" MaxLines="2"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <controls:CustomTabBar Grid.Row="3"/>
+    </Grid>
+</ContentPage> 

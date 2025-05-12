@@ -33,7 +33,7 @@ A modern recipe application built with .NET MAUI that helps users discover, save
 - [ ] Add image loading and caching
 
 ### 2. Authentication & User Management
-- [ ] Set up Firebase Authentication or custom backend
+- [ ] Set up authentication backend
 - [ ] Implement Google Sign-In:
   ```csharp
   public interface IAuthService
@@ -49,17 +49,17 @@ A modern recipe application built with .NET MAUI that helps users discover, save
 - [ ] Create user profile management
 
 ### 3. Database Integration
-- [ ] Set up Firebase Realtime Database or custom backend
+- [ ] Set up backend database
 - [ ] Create data models for:
   - User profiles
   - Favorites
-  - Recipe collections // MAYBE
-  - User preferences // trendingScores basically naa tay row na mu check current ratings sa mga recipes
+  - Recipe collections
+  - User preferences
 - [ ] Implement data synchronization
 - [ ] Add offline support with local SQLite database
 
-### 4. Cloud Storage //TENTATIVE (this is if we implement creating a custom recipe probably not)
-- [ ] Set up Firebase Storage or alternative
+### 4. Cloud Storage
+- [ ] Set up cloud storage solution
 - [ ] Implement image upload for:
   - User profile pictures
   - Custom recipe images
@@ -102,7 +102,6 @@ A modern recipe application built with .NET MAUI that helps users discover, save
 - [ ] Add data encryption for sensitive information
 - [ ] Implement proper error handling and logging
 
-
 ### 7. Performance Optimization
 - [ ] Implement lazy loading
 - [ ] Add image caching
@@ -128,12 +127,6 @@ Create a `appsettings.json` file with the following structure:
       "BaseUrl": "https://api.recipe-service.com",
       "ApiKey": "your-api-key",
       "TimeoutSeconds": 30
-    },
-    "Firebase": {
-      "ApiKey": "your-firebase-key",
-      "AuthDomain": "your-app.firebaseapp.com",
-      "ProjectId": "your-project-id",
-      "StorageBucket": "your-bucket.appspot.com"
     }
   }
 }
@@ -142,9 +135,6 @@ Create a `appsettings.json` file with the following structure:
 ## Dependencies
 
 - .NET MAUI
-- Firebase Authentication
-- Firebase Realtime Database
-- Firebase Storage
 - SQLite
 - Xamarin.Essentials
 - Newtonsoft.Json

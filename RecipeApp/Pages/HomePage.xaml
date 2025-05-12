@@ -2,11 +2,21 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:RecipeApp.Controls"
+             xmlns:models="clr-namespace:RecipeApp.Models"
+             xmlns:local="clr-namespace:RecipeApp.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="RecipeApp.Pages.HomePage"
              Shell.NavBarIsVisible="False"
              Padding="0,40,0,0"
              BackgroundColor="#D98236"
              Title="Home">
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<local:TruncateConverter x:Key="TruncateConverter" />
+			<local:AreaToFlagConverter x:Key="AreaToFlagConverter" />
+		</ResourceDictionary>
+	</ContentPage.Resources>
 
 	<Grid BackgroundColor="#FFF9F4"
           HorizontalOptions="Fill"
@@ -69,460 +79,232 @@
 
 		<ScrollView Grid.Row="2" Scrolled="ScrollView_Scrolled">
 			<VerticalStackLayout>
-			
-				<CarouselView x:Name="carouselFeatured"
-				  HeightRequest="225"
-				  Margin="0,15,0,15"
-				  ItemsSource="{Binding CarouselFeatured}"
-				  PeekAreaInsets="50"
-				  IsBounceEnabled="True"
-                  Loop="True">
-					<CarouselView.ItemsLayout>
-						<LinearItemsLayout Orientation="Horizontal"
-										   ItemSpacing="7.5"/>
-					</CarouselView.ItemsLayout>
+				<!-- Recipe of the Day -->
+				<Label Text="Recipe of the Day" FontSize="24" FontAttributes="Bold" TextColor="#5b8224" Margin="10,20,0,10"/>
+				<Frame BorderColor="#5b8224" CornerRadius="20" Margin="10,0,10,20" Padding="0" HasShadow="True">
+					<Grid>
+						<Grid.GestureRecognizers>
+							<TapGestureRecognizer Tapped="OnRecipeOfTheDayTapped"/>
+						</Grid.GestureRecognizers>
+						<Image Source="{Binding RecipeOfTheDay.Thumbnail}" Aspect="AspectFill" HeightRequest="220"/>
+						<BoxView BackgroundColor="#80000000" HeightRequest="220"/>
+						<VerticalStackLayout Padding="20" VerticalOptions="End">
+							<Label Text="{Binding RecipeOfTheDay.Name}" FontSize="22" FontAttributes="Bold" TextColor="White"/>
+							<Label Text="{Binding RecipeOfTheDay.Category}" FontSize="16" TextColor="White"/>
+							<HorizontalStackLayout Spacing="8" Margin="0,10,0,0">
+								<ImageButton Source="favorite.svg"
+										   HeightRequest="28"
+										   WidthRequest="28"
+										   Padding="6"
+										   BackgroundColor="Transparent"
+										   Command="{Binding AddToFavoritesCommand}"
+										   CommandParameter="{Binding RecipeOfTheDay}"/>
+								<ImageButton Source="share.svg"
+										   HeightRequest="28"
+										   WidthRequest="28"
+										   Padding="6"
+										   BackgroundColor="Transparent"
+										   Command="{Binding ShareRecipeCommand}"
+										   CommandParameter="{Binding RecipeOfTheDay}"/>
+							</HorizontalStackLayout>
+						</VerticalStackLayout>
+					</Grid>
+				</Frame>
+
+				<!-- Featured Recipes (horizontal, Explore-style, CarouselView) -->
+				<Label Text="Featured Recipes" FontSize="20" FontAttributes="Bold" TextColor="#5b8224" Margin="10,0,0,5"/>
+				<CarouselView ItemsSource="{Binding CarouselFeatured}"
+							   HeightRequest="175"
+  PeekAreaInsets="75"
+  ItemsLayout="HorizontalList"
+  Position="0">
 					<CarouselView.ItemTemplate>
 						<DataTemplate>
-							<Border StrokeShape="RoundRectangle 25"
-									BackgroundColor="#5b8224"
-                                    StrokeThickness="0"
-                                    WidthRequest="300"
-                                    HeightRequest="225">
-                                <Border.Shadow>
-                                    <Shadow Offset="0,4" Radius="8" Opacity="0.2"/>
-                                </Border.Shadow>
+							<Border Margin="5"
+									Padding="10"
+									Stroke="#5b8224"
+									StrokeThickness="1"
+									StrokeShape="RoundRectangle 10"
+									BackgroundColor="White"
+									WidthRequest="220">
 								<Border.GestureRecognizers>
 									<TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ViewRecipeCommand}"
 														  CommandParameter="{Binding .}"/>
 								</Border.GestureRecognizers>
-								<Grid RowDefinitions="180,Auto">
-									<Grid>
-										<Image Source="{Binding Image}"
+								<Grid ColumnDefinitions="Auto,*">
+									<Border Grid.Column="0"
+											StrokeShape="RoundRectangle 15"
+											BackgroundColor="Transparent"
+											HeightRequest="150"
+											WidthRequest="90"
+										
+											Margin="0,0,10,0"
+											StrokeThickness="0">
+										<Image Source="{Binding Thumbnail}"
 											   Aspect="AspectFill"
-											   HeightRequest="180"/>
-										<BoxView HeightRequest="180">
-											<BoxView.Background>
-												<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-													<GradientStop Color="Transparent" Offset="0.0"/>
-													<GradientStop Color="#CC000000" Offset="1.0"/>
-												</LinearGradientBrush>
-											</BoxView.Background>
-										</BoxView>
-                                        <VerticalStackLayout VerticalOptions="End" 
-                                                           Padding="15,0,15,15">
+                                               
+											   HeightRequest="150"
+											   WidthRequest="90"/>
+									</Border>
+									<VerticalStackLayout Grid.Column="1" Spacing="4">
                                             <Label Text="{Binding Name}"
-                                                   FontSize="24"
+											   FontSize="16"
                                                    FontAttributes="Bold"
-                                                   TextColor="White"/>
-                                            <Label Text="{Binding Caption}"
+											   TextColor="#456B19"/>
+										<Label Text="{Binding Category}"
                                                    FontSize="14"
-                                                   TextColor="White"
-                                                   Opacity="0.9"
-                                                   LineHeight="1.4"/>
-                                        </VerticalStackLayout>
-                                        <HorizontalStackLayout HorizontalOptions="End" 
-                                                             VerticalOptions="Start"
-                                                             Spacing="12"
-                                                             Margin="15,15,15,0">
+											   TextColor="#666666"/>
+										<Label Text="{Binding Area}"
+                                                   FontSize="14"
+											   TextColor="#5b8224"/>
+										<Label Text="{Binding Instructions, Converter={StaticResource TruncateConverter}, ConverterParameter=80}"
+											   FontSize="13"
+											   TextColor="#999"
+											   LineBreakMode="TailTruncation"
+											   MaxLines="2"/>
+										<HorizontalStackLayout Spacing="8" HorizontalOptions="Start">
                                             <ImageButton Source="favorite.svg"
-                                                       HeightRequest="32"
-                                                       WidthRequest="32"
-                                                       Padding="10"
+														 HeightRequest="28"
+														 WidthRequest="28"
+														 Padding="6"
                                                        BackgroundColor="Transparent"
                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=AddToFavoritesCommand}"
                                                        CommandParameter="{Binding .}"/>
                                             <ImageButton Source="share.svg"
-                                                       HeightRequest="32"
-                                                       WidthRequest="32"
-                                                       Padding="10"
+														 HeightRequest="28"
+														 WidthRequest="28"
+														 Padding="6"
                                                        BackgroundColor="Transparent"
                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ShareRecipeCommand}"
                                                        CommandParameter="{Binding .}"/>
+											<ImageButton Source="youtube.svg"
+														 HeightRequest="28"
+														 WidthRequest="28"
+														 Padding="6"
+														 BackgroundColor="Transparent"
+														 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ViewRecipeCommand}"
+														 CommandParameter="{Binding .}"/>
                                         </HorizontalStackLayout>
-									</Grid>
-                                    
-                                    <Grid Grid.Row="1" 
-                                          Padding="15,12">
-                                        <HorizontalStackLayout Spacing="20" 
-                                                             HorizontalOptions="Center">
-                                            <HorizontalStackLayout Spacing="6">
-                                                <Image Source="time.svg"
-                                                       HeightRequest="20"
-                                                       WidthRequest="20"/>
-                                                <Label Text="{Binding CookTime}"
-                                                       FontSize="14"
-                                                       TextColor="White"/>
-                                            </HorizontalStackLayout>
-                                            <Label Text="•"
-                                                   FontSize="14"
-                                                   TextColor="White"/>
-                                            <HorizontalStackLayout Spacing="6">
-                                                <Image Source="difficulty.svg"
-                                                       HeightRequest="20"
-                                                       WidthRequest="20"/>
-                                                <Label Text="{Binding Difficulty}"
-                                                       FontSize="14"
-                                                       TextColor="White"/>
-                                            </HorizontalStackLayout>
-                                            <Label Text="•"
-                                                   FontSize="14"
-                                                   TextColor="White"/>
-                                            <HorizontalStackLayout Spacing="6">
-                                                <Image Source="servings.svg"
-                                                       HeightRequest="20"
-                                                       WidthRequest="20"/>
-                                                <Label Text="{Binding Servings}"
-                                                       FontSize="14"
-                                                       TextColor="White"/>
-                                            </HorizontalStackLayout>
-                                        </HorizontalStackLayout>
-                                    </Grid>
+									</VerticalStackLayout>
 								</Grid>
 							</Border>
 						</DataTemplate>
 					</CarouselView.ItemTemplate>
 				</CarouselView>
 
-                <IndicatorView x:Name="indicatorView"
-                             IndicatorColor="#D9D9D9"
-                             SelectedIndicatorColor="#5b8224"
-                             HorizontalOptions="Center"
-                             Margin="0,0,0,15"
-                             Count="{Binding CarouselFeatured.Count}"
-                             Position="{Binding Source={x:Reference carouselFeatured}, Path=Position}"/>
 
-                <!-- Special Recipe of the Day -->
-				<Border BackgroundColor="#5b8224"
-                        StrokeShape="RoundRectangle 25"
-                        Margin="10">
-                    <Border.Shadow>
-                        <Shadow Offset="0,4" Radius="8" Opacity="0.2"/>
-                    </Border.Shadow>
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding ViewRecipeCommand}"
-                                              CommandParameter="{Binding .}"/>
-                    </Border.GestureRecognizers>
-					<Grid RowDefinitions="Auto,Auto">
-                        <!-- Image with Gradient Overlay -->
-                        <Grid Grid.Row="0">
-                            <Image Source="{Binding RecipeOfTheDay.Image}"
-                                   Aspect="AspectFill"
-                                   HeightRequest="300"/>
-                            
-                            <BoxView HeightRequest="300">
-                                <BoxView.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                        <GradientStop Color="Transparent" Offset="0.0"/>
-                                        <GradientStop Color="#CC000000" Offset="1.0"/>
-                                    </LinearGradientBrush>
-                                </BoxView.Background>
-                            </BoxView>
-
-                            <!-- Recipe Info Overlay -->
-                            <VerticalStackLayout Spacing="10"
-                                               Padding="20"
-                                               VerticalOptions="End">
-                                <Label Text="Recipe of the Day"
-                                       FontSize="32"
-                                       FontAttributes="Bold"
-                                       TextColor="White"/>
-                                <Label Text="{Binding RecipeOfTheDay.Caption}"
-                                       FontSize="16"
-                                       TextColor="White"
-                                       Opacity="0.9"
-                                       LineHeight="1.4"/>
-                                
-                                <HorizontalStackLayout Spacing="20" Margin="0,8,0,0">
-                                    <HorizontalStackLayout Spacing="6">
-                                        <Image Source="time.svg"
-                                               HeightRequest="20"
-                                               WidthRequest="20"/>
-                                        <Label Text="{Binding RecipeOfTheDay.CookTime}"
-                                               FontSize="14"
-                                               TextColor="White"/>
-                                    </HorizontalStackLayout>
-                                    
-                                    <HorizontalStackLayout Spacing="6">
-                                        <Image Source="difficulty.svg"
-                                               HeightRequest="20"
-                                               WidthRequest="20"/>
-                                        <Label Text="{Binding RecipeOfTheDay.Difficulty}"
-                                               FontSize="14"
-                                               TextColor="White"/>
-                                    </HorizontalStackLayout>
-                                    
-                                    <HorizontalStackLayout Spacing="6">
-                                        <Image Source="servings.svg"
-                                               HeightRequest="20"
-                                               WidthRequest="20"/>
-                                        <Label Text="{Binding RecipeOfTheDay.Servings}"
-                                               FontSize="14"
-                                               TextColor="White"/>
-                                    </HorizontalStackLayout>
-                                </HorizontalStackLayout>
-                            </VerticalStackLayout>
-
-                            <!-- Action Buttons -->
-                            <HorizontalStackLayout HorizontalOptions="End" 
-                                                 VerticalOptions="Start"
-                                                 Spacing="12"
-                                                 Margin="15,15,15,0">
-                                <ImageButton Source="favorite.svg"
-                                           HeightRequest="32"
-                                           WidthRequest="32"
-                                           Padding="5"
-                                           BackgroundColor="Transparent"
-                                           Command="{Binding AddToFavoritesCommand}"
-                                           CommandParameter="{Binding RecipeOfTheDay}"/>
-                                <ImageButton Source="share.svg"
-                                           HeightRequest="32"
-                                           WidthRequest="32"
-                                           Padding="5"
-                                           BackgroundColor="Transparent"
-                                           Command="{Binding ShareRecipeCommand}"
-                                           CommandParameter="{Binding RecipeOfTheDay}"/>
-                            </HorizontalStackLayout>
-                        </Grid>
-
-                        <!-- View Recipe Button -->
-                        <Button Text="View Recipe"
-                                Grid.Row="1"
-                                BackgroundColor="White"
-                                TextColor="#5b8224"
-                                FontSize="16"
-                                FontAttributes="Bold"
-                                CornerRadius="25"
-                                HeightRequest="50"
-                                Margin="20,15,20,20"
-                                Command="{Binding ViewRecipeCommand}"
-                                CommandParameter="{Binding RecipeOfTheDay}"/>
-					</Grid>
-				</Border>
-
-                <CollectionView x:Name="TagsCollection"
-                              HeightRequest="120"
-                              Margin="0,15,0,0"
-                              ItemsSource="{Binding Tags}">
+				<!-- Tags Carousel -->
+				<Label Text="Tags" FontSize="20" FontAttributes="Bold" TextColor="#5b8224" Margin="10,0,0,5"/>
+				<CollectionView ItemsSource="{Binding Areas}" HeightRequest="40" Margin="0,0,0,20" HorizontalScrollBarVisibility="Never">
 					<CollectionView.ItemsLayout>
-						<LinearItemsLayout Orientation="Horizontal"
-                                           ItemSpacing="10"/>
+						<LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
 					</CollectionView.ItemsLayout>
 					<CollectionView.ItemTemplate>
 						<DataTemplate>
-                            <VerticalStackLayout Spacing="5">
-								<Border StrokeShape="RoundRectangle 15,15,15,15"
-                                        WidthRequest="100"
-                                        HeightRequest="80"
-                                        BackgroundColor="#5b8224">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=NavigateToExploreWithTagCommand}"
-                                                              CommandParameter="{Binding Name}"/>
-                                    </Border.GestureRecognizers>
-                                    <Grid RowDefinitions="*" Padding="10">
-                                        <Image Source="{Binding ImageUrl}"
-                                               Aspect="AspectFill"
-                                               HeightRequest="60"
-                                               WidthRequest="80"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"/>
-                                    </Grid>
-								</Border>
-                                <Label Text="{Binding Name}"
-                                       FontSize="14"
-                                       TextColor="#5b8224"
-                                       HorizontalOptions="Center"/>
-                            </VerticalStackLayout>
+							<Frame CornerRadius="15" Padding="10,5" BackgroundColor="White" Margin="5,0" BorderColor="#5b8224" HasShadow="False">
+								<HorizontalStackLayout Spacing="5">
+									<Label Text="{Binding Converter={StaticResource AreaToFlagConverter}}" FontSize="12"/>
+									<Label Text="{Binding}" TextColor="#5b8224" FontSize="12"/>
+								</HorizontalStackLayout>
+							</Frame>
 						</DataTemplate>
 					</CollectionView.ItemTemplate>
 				</CollectionView>
 
-                <!-- Trending Recipes Section -->
-                <Label Text="Trending Now"
-                       FontSize="24"
-                       FontAttributes="Bold"
-                       TextColor="#5b8224"
-                       HorizontalOptions="Start"
-                       Margin="10,25,0,10"/>
 
-                <CarouselView x:Name="trendingRecipes"
-                            HeightRequest="225"
-                            Margin="0,0,0,15"
-                            ItemsSource="{Binding TrendingRecipes}"
-                            PeekAreaInsets="50"
-                            IsBounceEnabled="True"
-                            Loop="True">
-                    <CarouselView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal"
-                                         ItemSpacing="7.5"/>
-                    </CarouselView.ItemsLayout>
+                <!-- Trending Recipes (horizontal, Explore-style, CarouselView) -->
+                <Label Text="Trending Recipes" FontSize="20" FontAttributes="Bold" TextColor="#5b8224" Margin="10,0,0,5"/>
+                <CarouselView ItemsSource="{Binding TrendingRecipes}"
+						  HeightRequest="175"
+                          PeekAreaInsets="75"
+						  ItemsLayout="HorizontalList"
+						  Position="0">
                     <CarouselView.ItemTemplate>
                         <DataTemplate>
-                            <Border StrokeShape="RoundRectangle 25"
-                                    BackgroundColor="#5b8224"
-                                    StrokeThickness="0"
-                                    WidthRequest="300"
-                                    HeightRequest="225">
-                                <Border.Shadow>
-                                    <Shadow Offset="0,4" Radius="8" Opacity="0.2"/>
-                                </Border.Shadow>
+                            <Border Margin="10"
+									Padding="10"
+									Stroke="#5b8224"
+									StrokeThickness="1"
+									StrokeShape="RoundRectangle 10"
+									BackgroundColor="White"
+									WidthRequest="220">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ViewRecipeCommand}"
                                                           CommandParameter="{Binding .}"/>
                                 </Border.GestureRecognizers>
-                                <Grid RowDefinitions="180,Auto">
-                                    <Grid>
-                                        <Image Source="{Binding Image}"
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <Border Grid.Column="0"
+											StrokeShape="RoundRectangle 15"
+											BackgroundColor="Transparent"
+											HeightRequest="150"
+											WidthRequest="90"
+											Margin="0,0,10,0"
+											StrokeThickness="0">
+                                        <Image Source="{Binding Thumbnail}"
                                                Aspect="AspectFill"
-                                               HeightRequest="180"/>
-                                        <BoxView HeightRequest="180">
-                                            <BoxView.Background>
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                    <GradientStop Color="Transparent" Offset="0.0"/>
-                                                    <GradientStop Color="#CC000000" Offset="1.0"/>
-                                                </LinearGradientBrush>
-                                            </BoxView.Background>
-                                        </BoxView>
-                                        <VerticalStackLayout VerticalOptions="End" 
-                                                           Padding="15,0,15,15">
+											   HeightRequest="150"
+											   WidthRequest="90"/>
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4">
                                             <Label Text="{Binding Name}"
-                                                   FontSize="24"
+											   FontSize="16"
                                                    FontAttributes="Bold"
-                                                   TextColor="White"/>
-                                            <Label Text="{Binding Caption}"
+											   TextColor="#456B19"/>
+                                        <Label Text="{Binding Category}"
                                                    FontSize="14"
-                                                   TextColor="White"
-                                                   Opacity="0.9"
-                                                   LineHeight="1.4"/>
-                                        </VerticalStackLayout>
-                                        <HorizontalStackLayout HorizontalOptions="End" 
-                                                             VerticalOptions="Start"
-                                                             Spacing="12"
-                                                             Margin="15,15,15,0">
+											   TextColor="#666666"/>
+                                        <Label Text="{Binding Area}"
+                                                   FontSize="14"
+											   TextColor="#5b8224"/>
+                                        <Label Text="{Binding Instructions, Converter={StaticResource TruncateConverter}, ConverterParameter=80}"
+											   FontSize="13"
+											   TextColor="#999"
+											   LineBreakMode="TailTruncation"
+											   MaxLines="2"/>
+                                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Start">
                                             <ImageButton Source="favorite.svg"
-                                                       HeightRequest="32"
-                                                       WidthRequest="32"
-                                                       Padding="10"
+														 HeightRequest="28"
+														 WidthRequest="28"
+														 Padding="6"
                                                        BackgroundColor="Transparent"
                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=AddToFavoritesCommand}"
                                                        CommandParameter="{Binding .}"/>
                                             <ImageButton Source="share.svg"
-                                                       HeightRequest="32"
-                                                       WidthRequest="32"
-                                                       Padding="10"
+														 HeightRequest="28"
+														 WidthRequest="28"
+														 Padding="6"
                                                        BackgroundColor="Transparent"
                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ShareRecipeCommand}"
+														 CommandParameter="{Binding .}"/>
+                                            <ImageButton Source="youtube.svg"
+														 HeightRequest="28"
+														 WidthRequest="28"
+														 Padding="6"
+														 BackgroundColor="Transparent"
+														 Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ViewRecipeCommand}"
                                                        CommandParameter="{Binding .}"/>
                                         </HorizontalStackLayout>
-                                    </Grid>
-                                    <Grid Grid.Row="1" 
-                                          Padding="15,12">
-                                        <HorizontalStackLayout Spacing="20" 
-                                                             HorizontalOptions="Center">
-                                            <HorizontalStackLayout Spacing="6">
-                                                <Image Source="time.svg"
-                                                       HeightRequest="20"
-                                                       WidthRequest="20"/>
-                                                <Label Text="{Binding CookTime}"
-                                                       FontSize="14"
-                                                       TextColor="White"/>
-                                            </HorizontalStackLayout>
-                                            <Label Text="•"
-                                                   FontSize="14"
-                                                   TextColor="White"/>
-                                            <HorizontalStackLayout Spacing="6">
-                                                <Image Source="difficulty.svg"
-                                                       HeightRequest="20"
-                                                       WidthRequest="20"/>
-                                                <Label Text="{Binding Difficulty}"
-                                                       FontSize="14"
-                                                       TextColor="White"/>
-                                            </HorizontalStackLayout>
-                                            <Label Text="•"
-                                                   FontSize="14"
-                                                   TextColor="White"/>
-                                            <HorizontalStackLayout Spacing="6">
-                                                <Image Source="servings.svg"
-                                                       HeightRequest="20"
-                                                       WidthRequest="20"/>
-                                                <Label Text="{Binding Servings}"
-                                                       FontSize="14"
-                                                       TextColor="White"/>
-                                            </HorizontalStackLayout>
-                                        </HorizontalStackLayout>
-                                    </Grid>
+                                    </VerticalStackLayout>
                                 </Grid>
                             </Border>
                         </DataTemplate>
                     </CarouselView.ItemTemplate>
                 </CarouselView>
 
-                <IndicatorView x:Name="trendingIndicatorView"
-                             IndicatorColor="#D9D9D9"
-                             SelectedIndicatorColor="#5b8224"
-                             HorizontalOptions="Center"
-                             Margin="0,0,0,15"
-                             Count="{Binding TrendingRecipes.Count}"
-                             Position="{Binding Source={x:Reference trendingRecipes}, Path=Position}"/>
-
-                <!-- Popular Categories Section -->
-                <Label Text="Popular Categories"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       TextColor="#5b8224"
-                       HorizontalOptions="Start"
-                       Margin="10,0,0,10"/>
-
-                <CollectionView ItemsSource="{Binding PopularCategories}"
-                              HeightRequest="280"
-                              Margin="10,0,10,20">
+                <!-- Category Carousel -->
+				<Label Text="Categories" FontSize="20" FontAttributes="Bold" TextColor="#5b8224" Margin="10,0,0,5"/>
+				<CollectionView ItemsSource="{Binding PopularCategories}" HeightRequest="100" Margin="0,0,0,20" HorizontalScrollBarVisibility="Never">
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical"
-                                       Span="2"
-                                       HorizontalItemSpacing="10"
-                                       VerticalItemSpacing="10"/>
+						<LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Border StrokeShape="RoundRectangle 15"
-                                    BackgroundColor="White"
-                                    StrokeThickness="1"
-                                    Stroke="#5b8224"
-                                    HeightRequest="130">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=NavigateToExploreWithTagCommand}"
-                                                          CommandParameter="{Binding Name}"/>
-                                </Border.GestureRecognizers>
-                                <Grid RowDefinitions="Auto,*"
-                                      Padding="15">
-                                    <HorizontalStackLayout Spacing="10">
-                                        <Border BackgroundColor="#5b8224"
-                                                StrokeShape="RoundRectangle 10"
-                                                HeightRequest="40"
-                                                WidthRequest="40">
-                                            <Image Source="{Binding Icon}"
-                                                   HeightRequest="24"
-                                                   WidthRequest="24"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center"/>
-                                        </Border>
+							<Frame BorderColor="#5b8224" CornerRadius="15" Padding="0" Margin="5,0" HasShadow="False" BackgroundColor="White">
                                         <VerticalStackLayout>
-                                            <Label Text="{Binding Name}"
-                                                   FontSize="16"
-                                                   FontAttributes="Bold"
-                                                   TextColor="#5b8224"/>
-                                            <Label Text="{Binding RecipeCount, StringFormat='{0} recipes'}"
-                                                   FontSize="12"
-                                                   TextColor="#666"/>
+									<Image Source="{Binding Thumbnail}" HeightRequest="60" WidthRequest="90" Aspect="AspectFill"/>
+									<Label Text="{Binding Name}" FontSize="12" TextColor="#5b8224" HorizontalOptions="Center" Margin="0,5"/>
                                         </VerticalStackLayout>
-                                    </HorizontalStackLayout>
-                                    <Label Grid.Row="1"
-                                           Text="{Binding Description}"
-                                           FontSize="14"
-                                           TextColor="#666"
-                                           VerticalOptions="End"
-                                           Margin="0,10,0,0"/>
-                                </Grid>
-                            </Border>
+							</Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

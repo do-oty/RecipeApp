@@ -8,54 +8,48 @@
 
     <Grid RowDefinitions="Auto,Auto,*,Auto">
     
+        <!-- Header -->
         <Border Grid.Row="0"
                 BackgroundColor="#D98236"
                 HeightRequest="50"
                 Padding="5"
-                StrokeThickness="0">
-        </Border>
+                StrokeThickness="0" />
 
-        <!-- Search Bar and Tags Section -->
+        <!-- Search and Filter Bar -->
         <Border Grid.Row="1"
                 BackgroundColor="#D98236"
                 Padding="2"
                 StrokeThickness="0"
                 ZIndex="2"
                 Margin="0,-5,0,0">
-            <VerticalStackLayout Spacing="5">
-                <!-- Search Bar -->
-                <Border BackgroundColor="White"
+            <Grid ColumnDefinitions="*,Auto" Padding="10">
+                <Border Grid.Column="0"
+                        BackgroundColor="White"
                         HeightRequest="35"
                         Stroke="#5b8224"
                         Padding="5"
-                        Margin="10,0,10,0"
+                        Margin="0,0,10,0"
                         StrokeShape="RoundRectangle 5,5,5,5"
                         StrokeThickness="0">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <Entry Placeholder="Search favorites..."
-                               Text="{Binding SearchQuery}"
-                               BackgroundColor="Transparent"
-                               FontSize="14"
-                               HeightRequest="40"
-                               Margin="10,0,0,0"
-                               TextChanged="SearchEntry_TextChanged"/>
-                        <ImageButton Source="explore.svg"
-                                   Command="{Binding SearchCommand}"
-                                   BackgroundColor="Transparent"
-                                   HeightRequest="30"
-                                   WidthRequest="30"
-                                   HorizontalOptions="End"/>
-                    </Grid>
+                    <SearchBar Placeholder="Search favorites..."
+                              Text="{Binding SearchQuery}"
+                              SearchCommand="{Binding SearchCommand}"
+                              BackgroundColor="Transparent"
+                              TextColor="Black"
+                              PlaceholderColor="#666666"
+                              FontSize="14"
+                              HeightRequest="40"
+                              Margin="10,0,0,0"/>
                 </Border>
-
-                <!-- Selected Tags ScrollView -->
-                <ScrollView Orientation="Horizontal"
-                           HorizontalScrollBarVisibility="Never"
-                           Margin="10,0">
-                    <HorizontalStackLayout x:Name="SelectedTagsContainer" 
-                                         Spacing="8"/>
-                </ScrollView>
-            </VerticalStackLayout>
+                <Button Grid.Column="1"
+                        Text="Filter"
+                        Command="{Binding ShowFilterModalCommand}"
+                        BackgroundColor="#5b8224"
+                        TextColor="White"
+                        HeightRequest="35"
+                        WidthRequest="80"
+                        CornerRadius="5"/>
+            </Grid>
         </Border>
 
         <!-- Main Content -->
@@ -75,77 +69,56 @@
                            ItemsSource="{Binding FilteredFavorites}"
                            SelectionMode="None">
                 <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical"
-                                     ItemSpacing="15"/>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
                 </CollectionView.ItemsLayout>
                 <CollectionView.EmptyView>
-                    <VerticalStackLayout VerticalOptions="Center"
-                                       HorizontalOptions="Center"
-                                       Spacing="10">
-                        <Image Source="empty_favorites.svg"
-                               HeightRequest="120"
-                               WidthRequest="120"
-                               Opacity="0.5"/>
-                        <Label Text="No favorites yet"
-                               FontSize="18"
-                               TextColor="#666"
-                               HorizontalOptions="Center"/>
-                        <Label Text="Your favorite recipes will appear here"
-                               FontSize="14"
-                               TextColor="#999"
-                               HorizontalOptions="Center"/>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Image Source="empty_favorites.svg" HeightRequest="120" WidthRequest="120" Opacity="0.5"/>
+                        <Label Text="No favorites yet" FontSize="18" TextColor="#666" HorizontalOptions="Center"/>
+                        <Label Text="Your favorite recipes will appear here" FontSize="14" TextColor="#999" HorizontalOptions="Center"/>
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Border BackgroundColor="White"
-                                StrokeShape="RoundRectangle 15"
+                        <Border Margin="10"
+                                Padding="10"
                                 Stroke="#5b8224"
-                                StrokeThickness="1">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ViewRecipeCommand}"
-                                                    CommandParameter="{Binding .}"/>
-                            </Border.GestureRecognizers>
-                            <Grid ColumnDefinitions="Auto,*,Auto"
-                                  Padding="15"
-                                  ColumnSpacing="15">
-                                <Image Source="{Binding Image}"
-                                       HeightRequest="80"
-                                       WidthRequest="80"
-                                       Aspect="AspectFill"/>
-                                <VerticalStackLayout Grid.Column="1"
-                                                   VerticalOptions="Center"
-                                                   Spacing="5">
-                                    <Label Text="{Binding Name}"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           TextColor="#5b8224"/>
-                                    <Label Text="{Binding Description}"
-                                           FontSize="14"
-                                           TextColor="#666"
-                                           MaxLines="2"
-                                           LineBreakMode="TailTruncation"/>
-                                    <HorizontalStackLayout Spacing="8">
-                                        <Label Text="{Binding CookTime}"
-                                               FontSize="12"
-                                               TextColor="#999"/>
-                                        <Label Text="•"
-                                               FontSize="12"
-                                               TextColor="#999"/>
-                                        <Label Text="{Binding Category}"
-                                               FontSize="12"
-                                               TextColor="#999"/>
-                                    </HorizontalStackLayout>
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10"
+                                BackgroundColor="White">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0"
+                                    StrokeShape="RoundRectangle 10"
+                                    BackgroundColor="Transparent"
+                                    HeightRequest="150"
+                                    WidthRequest="125"
+                                    Margin="0,0,10,0"
+                                    StrokeThickness="0">
+                                    <Image Source="{Binding Thumbnail}"
+                                           Aspect="AspectFill"
+                                           HeightRequest="150"
+                                           WidthRequest="125"/>
+                                </Border>
+                                <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                    <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold" TextColor="#456B19"/>
+                                    <Label Text="{Binding Category}" FontSize="14" TextColor="#666666"/>
+                                    <Label Text="{Binding Area}" FontSize="14" TextColor="#5b8224"/>
+                                    <Label Text="{Binding Instructions}" FontSize="13" TextColor="#999" LineBreakMode="TailTruncation" MaxLines="2"/>
                                 </VerticalStackLayout>
                                 <ImageButton Grid.Column="2"
-                                           Source="heart_filled.svg"
-                                           HeightRequest="24"
-                                           WidthRequest="24"
-                                           BackgroundColor="Transparent"
-                                           Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=RemoveFromFavoritesCommand}"
-                                           CommandParameter="{Binding .}"
-                                           VerticalOptions="Start"/>
+                                             Source="close.png"
+                                             HeightRequest="28"
+                                             WidthRequest="28"
+                                             BackgroundColor="Transparent"
+                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=RemoveFromFavoritesCommand}"
+                                             CommandParameter="{Binding .}"
+                                             VerticalOptions="Start"
+                                             HorizontalOptions="End"/>
                             </Grid>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=ViewRecipeCommand}"
+                                                     CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

@@ -4,8 +4,14 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:RecipeApp.Pages"
+    xmlns:views="clr-namespace:RecipeApp.Views"
     Shell.FlyoutBehavior="Disabled"
-    Shell.NavBarIsVisible="False">
+    Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False">
+
+    <ShellContent
+        Route="HomePage"
+        ContentTemplate="{DataTemplate pages:HomePage}" />
 
     <ShellContent
         Route="MainPage"
@@ -20,12 +26,8 @@
         ContentTemplate="{DataTemplate pages:SignUpPage}" />
 
     <ShellContent
-        Route="HomePage"
-        ContentTemplate="{DataTemplate pages:HomePage}" />
-
-    <ShellContent
         Route="ExplorePage"
-        ContentTemplate="{DataTemplate pages:ExplorePage}" />
+        ContentTemplate="{DataTemplate views:ExplorePage}" />
 
     <ShellContent
         Route="FavoritesPage"
@@ -38,5 +40,16 @@
     <ShellContent
         Route="RecipeDetailsPage"
         ContentTemplate="{DataTemplate pages:RecipeDetailsPage}" />
+
+    <TabBar>
+        <Tab Title="Explore" Icon="explore.svg">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:ExplorePage}" />
+        </Tab>
+        <Tab Title="Meals" Icon="meal.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate views:MealsPage}" />
+        </Tab>
+    </TabBar>
 
 </Shell>

@@ -1,6 +1,6 @@
 # Recipe App
 
-A cross-platform mobile application built with .NET MAUI that helps users discover, save, and manage recipes.
+A android mobile application built with .NET MAUI that helps users discover, save, and manage recipes.
 
 <img src="RecipeApp/readmeimg.jpg" alt="Recipe App Screenshot" width="400"/>
 
@@ -60,9 +60,7 @@ RecipeApp/
 ## Supported Platforms
 
 - Android (API 21+)
-- iOS (15.0+)
-- macOS (15.0+)
-- Windows (10.0.17763.0+)
+- Windows (10.0.17763.0+) (UI will be janky)
 
 ## Getting Started
 
@@ -135,11 +133,9 @@ The application follows the MVVM pattern and uses the CommunityToolkit.Mvvm pack
 ### Technical Constraints
 
 #### Platform Support
-- Cross-platform support for Android, iOS, macOS, and Windows
+- Cross-platform support for Android and Windows
 - Minimum version requirements:
   - Android: API 21+
-  - iOS: 15.0+
-  - macOS: 15.0+
   - Windows: 10.0.17763.0+
 
 #### Architecture
